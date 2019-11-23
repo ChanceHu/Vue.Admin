@@ -1,3 +1,4 @@
+// store 的计算属性（依赖值发生了改变才会被重新计算。）
 const getters = {
   sidebar: state => state.app.sidebar,
   size: state => state.app.size,
@@ -10,6 +11,7 @@ const getters = {
   introduction: state => state.user.introduction,
   roles: state => state.user.roles,
   permission_routes: state => state.permission.routes,
-  errorLogs: state => state.errorLog.logs
+  errorLogs: state => state.errorLog.logs,
+  tokenExpire: state => state.user.tokenExpire
 }
 export default getters

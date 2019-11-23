@@ -7,9 +7,10 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
-  roles: []
+  roles: [],
+  tokenExpire: null
 }
-
+// mutations改变状态（值）
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
@@ -27,13 +28,14 @@ const mutations = {
     state.roles = roles
   }
 }
-
+// actions触发状态变更方法
 const actions = {
-  // user login
+  // 用户登录
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
+        console.log(response)
         const { data } = response
         commit('SET_TOKEN', data.token)
         setToken(data.token)
@@ -44,21 +46,27 @@ const actions = {
     })
   },
 
-  // get user info
+  // 获取用户信息
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
 
         if (!data) {
-          reject('Verification failed, please Login again.')
+          reject('验证失败，请重新登录.')
         }
 
         const { roles, name, avatar, introduction } = data
+        /* 模拟用户数据*/
+        name = 'admin'
+        avatar = '管理员'
+        introduction = '个人简介'
+        roles = [admin]
+        /* ---------- */
 
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
-          reject('getInfo: roles must be a non-null array!')
+          reject('roles角色必须是非空数组')
         }
 
         commit('SET_ROLES', roles)
@@ -72,7 +80,7 @@ const actions = {
     })
   },
 
-  // user logout
+  // 用户退出
   logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
@@ -92,7 +100,7 @@ const actions = {
     })
   },
 
-  // remove token
+  // 移除token
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
@@ -111,13 +119,14 @@ const actions = {
       setToken(token)
 
       const { roles } = await dispatch('getInfo')
-
+      // 模拟权限
+      roles = []
       resetRouter()
 
-      // generate accessible routes map based on roles
+      // 基于角色生成可访问路由图
       const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
 
-      // dynamically add accessible routes
+      // 动态添加可访问路由
       router.addRoutes(accessRoutes)
 
       // reset visited views and cached views
@@ -129,7 +138,7 @@ const actions = {
 }
 
 export default {
-  namespaced: true,
+  namespaced: true, // 启用了命名空间
   state,
   mutations,
   actions

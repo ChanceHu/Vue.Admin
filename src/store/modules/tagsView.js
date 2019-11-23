@@ -2,7 +2,7 @@ const state = {
   visitedViews: [],
   cachedViews: []
 }
-
+// mutations改变状态（值）
 const mutations = {
   ADD_VISITED_VIEW: (state, view) => {
     if (state.visitedViews.some(v => v.path === view.path)) return
@@ -65,7 +65,7 @@ const mutations = {
     }
   }
 }
-
+// actions触发状态变更方法
 const actions = {
   addView({ dispatch }, view) {
     dispatch('addVisitedView', view)

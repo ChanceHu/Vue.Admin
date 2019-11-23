@@ -14,7 +14,7 @@ function hasPermission(roles, route) {
 }
 
 /**
- * Filter asynchronous routing tables by recursion
+ * 递归过滤异步路由表
  * @param routes asyncRoutes
  * @param roles
  */
@@ -38,14 +38,14 @@ const state = {
   routes: [],
   addRoutes: []
 }
-
+// mutations改变状态（值）
 const mutations = {
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes
     state.routes = constantRoutes.concat(routes)
   }
 }
-
+// actions触发状态变更方法
 const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {

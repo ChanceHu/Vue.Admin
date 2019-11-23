@@ -1,10 +1,11 @@
 import request from '@/utils/request'
 
-export function login(data) {
+export function login(params) {
   return request({
-    url: '/user/login',
-    method: 'post',
-    data
+    url: '/Login/JWTToken',
+    method: 'get',
+    params,
+    baseURL: '/blog'
   })
 }
 

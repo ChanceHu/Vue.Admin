@@ -8,7 +8,7 @@ const state = {
   device: 'desktop',
   size: Cookies.get('size') || 'medium'
 }
-
+// mutations改变状态（值）
 const mutations = {
   TOGGLE_SIDEBAR: state => {
     state.sidebar.opened = !state.sidebar.opened
@@ -32,7 +32,7 @@ const mutations = {
     Cookies.set('size', size)
   }
 }
-
+// actions触发状态变更方法
 const actions = {
   toggleSideBar({ commit }) {
     commit('TOGGLE_SIDEBAR')

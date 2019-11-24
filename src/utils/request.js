@@ -17,6 +17,8 @@ service.interceptors.request.use(
     // do something before request is sent
 
     var curTime = new Date()
+    console.log('判断是否存在token')
+    console.log(store.getters.token)
     console.log(store.getters.sidebarLogo)
     // var expireTime = new Date(Date.parse(storeTemp.state.tokenExpire))
     // if (storeTemp.state.token && (curTime < expireTime && storeTemp.state.tokenExpire)) {

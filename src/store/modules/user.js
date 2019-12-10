@@ -26,6 +26,10 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_TOKEN_EXPIRE: (state, tokenExpire) => {
+    state.tokenExpire = tokenExpire
+    window.localStorage.setItem('TokenExpire', tokenExpire)
   }
 }
 // actions触发状态变更方法
@@ -35,11 +39,18 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        console.log(response)
-        const data  = response
+        const data = response
         console.log(data.token)
+        // 把token存入state
         commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        var curTime = new Date()
+        var expireDate = new Date(curTime.setSeconds(curTime.getSeconds() + data.expires_in))
+        // 把过期时间存state
+        commit('SET_TOKEN_EXPIRE', expireDate)
+        // 把过期时间存localStorage
+        window.localStorage.refreshTime = expireDate
+        // token时长
+        window.localStorage.expires_in = data.expires_in
         resolve()
       }).catch(error => {
         reject(error)

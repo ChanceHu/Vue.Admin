@@ -8,21 +8,16 @@ import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
+const whiteList = ['/login', '/auth-redirect'] // 不进行验证的路由
 
 router.beforeEach(async(to, from, next) => {
   // 开始进度条
   NProgress.start()
-
   // set page title
   document.title = getPageTitle(to.meta.title)
-  console.log('路由跳转之前')
-  console.log(store.getters.token)
   // 确定用户是否已登录
   const hasToken = getToken()
-
   if (hasToken) {
-  
     if (to.path === '/login') {
       // 如果已登录，重定向到主页
       next({ path: '/' })
@@ -58,7 +53,7 @@ router.beforeEach(async(to, from, next) => {
     }
   } else {
     /* 没有token*/
-    alert('没有token')
+    alert('路由跳转之前验证没有token')
     if (whiteList.indexOf(to.path) !== -1) {
       // 在免费登录白名单中，直接进入
       next()

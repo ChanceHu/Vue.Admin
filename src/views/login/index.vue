@@ -168,6 +168,7 @@ export default {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
+              alert('第一步用户验证成功')
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })

@@ -3,7 +3,7 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
 const state = {
-  token: getToken(),
+  token: null,
   name: '',
   avatar: '',
   introduction: '',
@@ -14,6 +14,7 @@ const state = {
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
+    window.localStorage.setItem("Token", token);
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
@@ -39,10 +40,11 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        const data = response
-        console.log(data.token)
+        
+        const data = response 
         // 把token存入state
         commit('SET_TOKEN', data.token)
+       
         var curTime = new Date()
         var expireDate = new Date(curTime.setSeconds(curTime.getSeconds() + data.expires_in))
         // 把过期时间存state
@@ -50,7 +52,7 @@ const actions = {
         // 把过期时间存localStorage
         window.localStorage.refreshTime = expireDate
         // token时长
-        window.localStorage.expires_in = data.expires_in
+        window.localStorage.expires_in = data.expires_in 
         resolve()
       }).catch(error => {
         reject(error)
@@ -61,18 +63,20 @@ const actions = {
   // 获取用户信息
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
+      getInfo(state.token).then(response => { 
+        const {response} = response
+        console.log("请求用户详情信息") 
         if (!data) {
           reject('验证失败，请重新登录.')
         }
+        window.localStorage.user = JSON.stringify(response)
+        const { RoleNames, uRealName, name, uRemark } = response;
+        console.log(RoleNames)
 
-        const { roles, name, avatar, introduction } = data
         /* 模拟用户数据*/
-        name = 'admin'
-        avatar = '管理员'
-        introduction = '个人简介'
+       
+        
+        
         roles = [admin]
         /* ---------- */
 
@@ -82,9 +86,9 @@ const actions = {
         }
 
         commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        commit('SET_INTRODUCTION', introduction)
+        commit('SET_NAME', uRealName)
+        commit('SET_AVATAR', name)
+        commit('SET_INTRODUCTION', uRemark)
         resolve(data)
       }).catch(error => {
         reject(error)

@@ -31,10 +31,10 @@ router.beforeEach(async(to, from, next) => {
         try {
           // 获取用户信息
           // 注意：角色必须是对象数组例如：['admin']或，['developer'，'editor']
-          const { roles } = await store.dispatch('user/getInfo')
+          const { RoleNames } = await store.dispatch('user/getInfo')
 
           // 基于角色生成可访问路由图
-          const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+          const accessRoutes = await store.dispatch('permission/generateRoutes', RoleNames)
 
           // 动态添加可访问路由
           router.addRoutes(accessRoutes)

@@ -3,12 +3,12 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
 const state = {
-  token: null,
+  token:window.localStorage.Token,
   name: '',
   avatar: '',
   introduction: '',
   roles: [],
-  tokenExpire: null
+  tokenExpire: window.localStorage.TokenExpire
 }
 // mutations改变状态（值）
 const mutations = {
@@ -27,6 +27,7 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+    window.localStorage.setItem("Roles", roles);
   },
   SET_TOKEN_EXPIRE: (state, tokenExpire) => {
     state.tokenExpire = tokenExpire
@@ -64,32 +65,24 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => { 
-        const {response} = response
+        const userInfo = response.response
         console.log("请求用户详情信息") 
-        if (!data) {
+        if (!response.success) {
           reject('验证失败，请重新登录.')
         }
-        window.localStorage.user = JSON.stringify(response)
-        const { RoleNames, uRealName, name, uRemark } = response;
-        console.log(RoleNames)
-
-        /* 模拟用户数据*/
-       
+        window.localStorage.user = JSON.stringify(userInfo)
+        const { RoleNames, uRealName, name, uRemark } = userInfo;
+        console.log(RoleNames) 
         
-        
-        roles = [admin]
-        /* ---------- */
-
-        // roles must be a non-empty array
-        if (!roles || roles.length <= 0) {
+        if (!RoleNames || RoleNames.length <= 0) {
           reject('roles角色必须是非空数组')
         }
 
-        commit('SET_ROLES', roles)
+        commit('SET_ROLES', RoleNames)
         commit('SET_NAME', uRealName)
         commit('SET_AVATAR', name)
         commit('SET_INTRODUCTION', uRemark)
-        resolve(data)
+        resolve(userInfo)
       }).catch(error => {
         reject(error)
       })
@@ -105,7 +98,7 @@ const actions = {
         removeToken()
         resetRouter()
 
-        // reset visited views and cached views
+        // 重置访问的视图和缓存的视图
         // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
         dispatch('tagsView/delAllViews', null, { root: true })
 
@@ -126,7 +119,7 @@ const actions = {
     })
   },
 
-  // dynamically modify permissions
+  // 动态修改权限
   changeRoles({ commit, dispatch }, role) {
     return new Promise(async resolve => {
       const token = role + '-token'

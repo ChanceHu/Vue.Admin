@@ -16,7 +16,7 @@ service.interceptors.request.use(
   config => {
     // do something before request is sent
     var curTime = new Date()
-    console.log(store.getters.token)
+  
     // var expireTime = new Date(Date.parse(storeTemp.state.tokenExpire))
     // if (storeTemp.state.token && (curTime < expireTime && storeTemp.state.tokenExpire)) {
     //   // 判断是否存在token，如果存在的话，则每个http header都加上token

@@ -14,18 +14,17 @@ var storeTemp = store
 // request interceptor
 service.interceptors.request.use(
   config => {
-    // do something before request is sent
-    var curTime = new Date()
-  
-    // var expireTime = new Date(Date.parse(storeTemp.state.tokenExpire))
-    // if (storeTemp.state.token && (curTime < expireTime && storeTemp.state.tokenExpire)) {
-    //   // 判断是否存在token，如果存在的话，则每个http header都加上token
-    //   config.headers.Authorization = "Bearer " + storeTemp.state.token;
-    // }
-    if (store.getters.token) {
-      config.headers.Authorization = 'Bearer ' + getToken()
+    // 请求之前验证token和过期事件
+    var curTime = new Date() 
+    // 过期时间
+    var expireTime = new Date(Date.parse(storeTemp.state.tokenExpire))
+    // 如果token不存在并且也已经过期了就滑动获取新token
+    if (storeTemp.state.token && (curTime < expireTime && storeTemp.state.tokenExpire)) {
+      // 判断是否存在token，如果存在的话，则每个http header都加上token
+      config.headers.Authorization = "Bearer " + storeTemp.state.token;
       config.headers['X-Token'] = getToken()
     }
+    await storeTemp.dispatch('user/saveRefreshTime');
     return config
   },
   error => {

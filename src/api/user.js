@@ -16,7 +16,9 @@ export function getInfo(token) {
     params: { token }
   })
 }
-
+export function name(params) {
+  
+}
 export function logout() {
   return request({
     url: '/user/logout',

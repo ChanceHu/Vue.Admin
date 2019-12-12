@@ -45,14 +45,15 @@ const actions = {
         const data = response 
         // 把token存入state
         commit('SET_TOKEN', data.token)
-       
+        //当前时间：2019/12/12 16:08:17
         var curTime = new Date()
+        //token过期时间:2019/12/12 17:08:17
         var expireDate = new Date(curTime.setSeconds(curTime.getSeconds() + data.expires_in))
-        // 把过期时间存state
+        //把过期时间存state
         commit('SET_TOKEN_EXPIRE', expireDate)
-        // 把过期时间存localStorage
+        //保存刷新时间，这里的和过期时间一致主要用于刷新token时验证
         window.localStorage.refreshTime = expireDate
-        // token时长
+        //token时长:3600
         window.localStorage.expires_in = data.expires_in 
         resolve()
       }).catch(error => {
@@ -60,7 +61,28 @@ const actions = {
       })
     })
   },
-
+  //定义token刷新时间戳
+  saveRefreshTime()
+  { 
+    let nowTime = new Date();
+    //上次刷新时间
+    let lastRefreshTime = window.localStorage.refreshTime ? new Date(window.localStorage.refreshTime) : new Date(-1);
+    //过期时间
+    let expireTime = new Date(Date.parse(window.localStorage.TokenExpire)) 
+    let refreshCount=1;//滑动系数（1用来在token过期后一分内访问可以重新获取token，超过则转到登录）
+    //如果当前时间小于最后刷新时间（也就是token过期后一分钟内）
+    if (lastRefreshTime >= nowTime) { 
+      lastRefreshTime=nowTime>expireTime ? nowTime:expireTime;
+      //每次都用过期时间或者当前时间加上滑动时间生成，用于token过期时判断是否跳转到登录页面
+      //在请求响应response返回的401状态时判断
+      lastRefreshTime.setMinutes(lastRefreshTime.getMinutes() + refreshCount);
+      window.localStorage.refreshTime = lastRefreshTime;
+    }else {
+      //当前时间大于token加上滑动时就设置refreshTime为最小
+      //然后在请求响应response返回的401时判断refreshTime时就会跳到登录
+      window.localStorage.refreshTime = new Date(-1);
+    }
+  },
   // 获取用户信息
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {

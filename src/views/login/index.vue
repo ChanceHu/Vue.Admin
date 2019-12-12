@@ -170,6 +170,13 @@ export default {
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
+              this.$notify(
+              {
+                type: "success",
+                message: `成功获取令牌，项目初始化中...`,
+                duration: 2000
+              });
+
             })
             .catch(() => {
               this.loading = false

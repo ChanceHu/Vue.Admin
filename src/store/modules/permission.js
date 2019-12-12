@@ -1,4 +1,5 @@
 import { asyncRoutes, constantRoutes } from '@/router'
+import {getPermission} from '@/api/permission'
 
 /**
  * Use meta.role to determine if the current user has permission
@@ -47,16 +48,16 @@ const mutations = {
 }
 // actions触发状态变更方法
 const actions = {
-  generateRoutes({ commit }, roles) {
+  generateRoutes({ commit }, uId) {
     return new Promise(resolve => {
-      let accessedRoutes
-      if (roles.includes('admin')) {
-        accessedRoutes = asyncRoutes || []
-      } else {
-        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      }
-      commit('SET_ROUTES', accessedRoutes)
-      resolve(accessedRoutes)
+      getPermission(uId).then(response => {
+        let accessedRoutes;
+        //这是根据角色资源加载导航条
+        //accessedRoutes = filterAsyncRoutes(asyncRoutes, roles) 
+        
+        commit('SET_ROUTES', accessedRoutes)
+        resolve(accessedRoutes)
+      })
     })
   }
 }

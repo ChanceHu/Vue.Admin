@@ -16,7 +16,8 @@ router.beforeEach(async(to, from, next) => {
   // set page title
   document.title = getPageTitle(to.meta.title)
   // 确定用户是否已登录
-  const hasToken = window.localStorage.Token
+  const hasToken = window.localStorage.Token;
+  await storeTemp.dispatch('user/saveRefreshTime');
   if (hasToken) {
     if (to.path === '/login') {
       // 如果已登录，重定向到主页
@@ -31,10 +32,9 @@ router.beforeEach(async(to, from, next) => {
         try {
           // 获取用户信息
           // 注意：角色必须是对象数组例如：['admin']或，['developer'，'editor']
-          const { RoleNames } = await store.dispatch('user/getInfo')
-
+          const { RoleNames,uID} = await store.dispatch('user/getInfo') 
           // 基于角色生成可访问路由图
-          const accessRoutes = await store.dispatch('permission/generateRoutes', RoleNames)
+          const accessRoutes = await store.dispatch('permission/generateRoutes', uID)
 
           // 动态添加可访问路由
           router.addRoutes(accessRoutes)

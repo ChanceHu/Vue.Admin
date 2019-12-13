@@ -1,8 +1,8 @@
-import { asyncRoutes, constantRoutes } from '@/router'
+import { asyncRoutes, constantRoutes,filterAsyncRouter } from '@/router'
 import {getPermission} from '@/api/permission'
 
 /**
- * Use meta.role to determine if the current user has permission
+ * 使用meta.role确定当前用户是否具有权限
  * @param roles
  * @param route
  */
@@ -42,7 +42,11 @@ const state = {
 // mutations改变状态（值）
 const mutations = {
   SET_ROUTES: (state, routes) => {
+    //新添加的路由
     state.addRoutes = routes
+    //concat方法用于连接两个或多个数组。
+    //把异步路由（也就是动态获取的路由）和公共路由导航合并（constantRoutes）
+    //全部路由
     state.routes = constantRoutes.concat(routes)
   }
 }
@@ -52,9 +56,11 @@ const actions = {
     return new Promise(resolve => {
       getPermission(uId).then(response => {
         let accessedRoutes;
-        //这是根据角色资源加载导航条
+        //这是根据角色资源加载导航条roles传入角色资源
         //accessedRoutes = filterAsyncRoutes(asyncRoutes, roles) 
-        
+        if(response.success){
+          accessedRoutes = filterAsyncRouter(response.response.children)
+        } 
         commit('SET_ROUTES', accessedRoutes)
         resolve(accessedRoutes)
       })

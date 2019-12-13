@@ -17,7 +17,7 @@ router.beforeEach(async(to, from, next) => {
   document.title = getPageTitle(to.meta.title)
   // 确定用户是否已登录
   const hasToken = window.localStorage.Token;
-  await storeTemp.dispatch('user/saveRefreshTime');
+  store.dispatch('user/saveRefreshTime');
   if (hasToken) {
     if (to.path === '/login') {
       // 如果已登录，重定向到主页

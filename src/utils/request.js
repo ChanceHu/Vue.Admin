@@ -78,6 +78,71 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
+    // 超时请求处理
+    var originalRequest = error.config;
+    if(error.code == 'ECONNABORTED' && error.message.indexOf('timeout')!=-1 && !originalRequest._retry){ 
+      Message({
+          message: '请求超时！',
+          type: 'error'
+      }); 
+      originalRequest._retry = true
+      return null;
+    }
+    if (error.response) {
+      if (error.response.status == 401) {
+        var curTime = new Date()
+        var refreshTime = new Date(Date.parse(window.localStorage.refreshTime))
+        // 在用户操作的活跃期内
+        if (window.localStorage.refreshTime && (curTime <= refreshTime)) {
+            const tokenSuccess =  store.dispatch('user/refreshToken')
+            if(tokenSuccess)
+            {
+              error.config.__isRetryRequest = true;
+              error.config.headers.Authorization = 'Bearer ' + res.token;
+              return axios(error.config);
+            } else {
+              // 刷新token失败 清除token信息并跳转到登录页面
+              store.dispatch('user/resetToken').then(() => {
+                location.reload()
+              })
+            }
+            // return  refreshToken({token: window.localStorage.Token}).then((res) => {
+            //   if (res.success) {
+            //     Message({
+            //         message: 'refreshToken success! loading data...',
+            //         type: 'success'
+            //     }); 
+            //     store.commit("SET_TOKEN", res.token); 
+            //     var curTime = new Date();
+            //     var expireDate = new Date(curTime.setSeconds(curTime.getSeconds() + res.expires_in));
+            //     store.commit("SET_TOKEN_EXPIRE", expireDate);
+
+            //     error.config.__isRetryRequest = true;
+            //     error.config.headers.Authorization = 'Bearer ' + res.token;
+            //     return axios(error.config);
+            //   } 
+            //   else {
+            //       // 刷新token失败 清除token信息并跳转到登录页面
+            //       //ToLogin()
+            //   }
+            // });
+        } 
+        else {
+          // 返回 401，并且不知用户操作活跃期内 清除token信息并跳转到登录页面
+          store.dispatch('user/resetToken').then(() => {
+          location.reload()
+          })
+        } 
+      }
+      // 403 无权限
+      if (error.response.status == 403) {
+          Message({
+              message: '失败！该操作无权限',
+              type: 'error'
+          });
+          return null;
+      }
+    }
     Message({
       message: error.message,
       type: 'error',

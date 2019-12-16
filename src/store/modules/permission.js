@@ -60,7 +60,20 @@ const actions = {
         //accessedRoutes = filterAsyncRoutes(asyncRoutes, roles) 
         if(response.success){
           accessedRoutes = filterAsyncRouter(response.response.children)
+        }
+        /*********过滤按钮**********/
+        var f = item => { 
+          if (item['children']) {
+              item['children'] = item['children'].filter(f);
+              return true;
+          } else if (item['IsButton']) {
+              return item['IsButton']===false;
+          }  else {
+              return true;
+          } 
         } 
+        accessedRoutes = accessedRoutes.filter(f); 
+        /**************************/
         commit('SET_ROUTES', accessedRoutes)
         resolve(accessedRoutes)
       })

@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo ,refreshToken} from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -88,7 +88,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => { 
         const userInfo = response.response
-        console.log("请求用户详情信息") 
+       
         if (!response.success) {
           reject('验证失败，请重新登录.')
         }
@@ -113,21 +113,20 @@ const actions = {
 
   // 用户退出
   logout({ commit, state, dispatch }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+    return new Promise((resolve) => {
+    
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
-        removeToken()
-        resetRouter()
-
+        window.localStorage.removeItem('user');
+        window.localStorage.removeItem('Token');
+        window.localStorage.removeItem('TokenExpire');
+        window.localStorage.removeItem('refreshTime');
+        //removeToken()
+        resetRouter() 
         // 重置访问的视图和缓存的视图
         // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
         dispatch('tagsView/delAllViews', null, { root: true })
-
         resolve()
-      }).catch(error => {
-        reject(error)
-      })
     })
   },
 
@@ -136,11 +135,30 @@ const actions = {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', [])
-      removeToken()
+      commit('SET_TOKEN_EXPIRE', '');
+      window.localStorage.removeItem('user');  
+      window.localStorage.removeItem('Token');
       resolve()
     })
   },
 
+  //刷新token
+  refreshToken({commit,state})
+  {
+    refreshToken({token:state.token}).then((res) => {
+      if (res.success){
+        commit("SET_TOKEN", res.token); 
+        var curTime = new Date();
+        var expireDate = new Date(curTime.setSeconds(curTime.getSeconds() + res.expires_in));
+        commit("SET_TOKEN_EXPIRE", expireDate);
+        reject(res.success)
+      }else{
+        reject(res.success);
+      } 
+    }).catch(error => {
+      reject(error)
+    })
+  },
   // 动态修改权限
   changeRoles({ commit, dispatch }, role) {
     return new Promise(async resolve => {
@@ -161,8 +179,7 @@ const actions = {
       router.addRoutes(accessRoutes)
 
       // reset visited views and cached views
-      dispatch('tagsView/delAllViews', null, { root: true })
-
+      dispatch('tagsView/delAllViews', null, { root: true }) 
       resolve()
     })
   }

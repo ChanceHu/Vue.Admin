@@ -36,7 +36,7 @@ module.exports = {
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
-        target: `http://127.0.0.1:8088`,
+        target: `http://127.0.0.1:8088/api`,
         changeOrigin: true,
         // 路径重写，替换target中的请求地址
         pathRewrite: {

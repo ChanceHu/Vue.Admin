@@ -12,14 +12,14 @@ import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
 
-const _import = require('@/router/_import_' + process.env.NODE_ENV)//获取组件的方法
+const _import = require('@/router/_import_' + process.env.NODE_ENV)// 获取组件的方法
 
 /**
  * 注意:子菜单只在路由子菜单时出现 children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
  *
  * hidden: true                  如果设置为true，项目将不会显示在侧栏(默认为false)
- * alwaysShow: true              如果设置为true，将始终显示根菜单,如果不设置alwaysShow，当项目有多个子路由时，它将成为嵌套模式，否则不显示根菜单 
+ * alwaysShow: true              如果设置为true，将始终显示根菜单,如果不设置alwaysShow，当项目有多个子路由时，它将成为嵌套模式，否则不显示根菜单
  * redirect: noRedirect          如果设置noRedirect将不会在面包屑中重定向(404)
  * name:'router-name'            名称由(必须设置!!)
  * meta : {
@@ -27,7 +27,7 @@ const _import = require('@/router/_import_' + process.env.NODE_ENV)//获取组�
     title: 'title'               名称显示在侧栏和面包屑(推荐设置)
     icon: 'svg-name'             图标显示在侧栏中
     noCache: true                如果设置为true，页面将不会被缓存(默认为false)
-    affix: true                  如果设置为真，则标记将附加在tags-view中 
+    affix: true                  如果设置为真，则标记将附加在tags-view中
     breadcrumb: false            如果设置为false，则该项将隐藏在breadcrumb中(默认为true)
     activeMenu: '/example/list'  如果设置路径，侧栏将突出显示您设置的路径
   }
@@ -170,7 +170,6 @@ export const asyncRoutes = [
     ]
   },
 
-  
   /** 当你的路由图太长时，你可以把它分成小模块 **/
   componentsRouter,
   chartsRouter,
@@ -245,7 +244,7 @@ export const asyncRoutes = [
         meta: { title: '404', noCache: true }
       }
     ]
-  },  
+  },
   {
     path: '/excel',
     component: Layout,
@@ -317,7 +316,7 @@ export const asyncRoutes = [
     path: '/pdf/download',
     component: () => import('@/views/pdf/download'),
     hidden: true
-  }, 
+  },
   {
     path: 'external-link',
     component: Layout,
@@ -329,10 +328,10 @@ export const asyncRoutes = [
     ]
   },
 
-  //404重定向页必须放在末尾！
+  // 404重定向页必须放在末尾！
   { path: '*', redirect: '/404', hidden: true }
 ]
-//创建路由数据Array<RouteConfig>
+// 创建路由数据Array<RouteConfig>
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
@@ -346,32 +345,32 @@ export function resetRouter() {
   const newRouter = createRouter()
   // matcher用来替换现有router的routes
   // 主要用来动态修改路由的时候重置路由为只有公共的路由导航
-  router.matcher = newRouter.matcher //重置路由器
+  router.matcher = newRouter.matcher // 重置路由器
 }
 export function filterAsyncRouter(asyncRouterMap) {
-  //注意这里的 asyncRouterMap 是一个数组
+  // 注意这里的 asyncRouterMap 是一个数组
   const accessedRouters = asyncRouterMap.filter(route => {
-      if (route.path && !route.IsButton) {
-          if (route.path === '/' || route.path === '-') {//Layout组件特殊处理
-              route.component = Layout
-          } else {
-              try {
-                  route.component = _import(route.path.replace('/:id',''))
-              } catch (e) {
-                  try {
-                      route.component = () => import('@/views' + route.path.replace('/:id','') + '.vue');
-                  } catch (error) {
-                      console.info('%c 当前路由 ' + route.path.replace('/:id','') + '.vue 不存在，因此如法导入组件，请检查接口数据和组件是否匹配，并重新登录，清空缓存!', "color:red")
-                  }
-              }
+    if (route.path && !route.IsButton) {
+      if (route.path === '/' || route.path === '-') { // Layout组件特殊处理
+        route.component = Layout
+      } else {
+        try {
+          route.component = _import(route.path.replace('/:id', ''))
+        } catch (e) {
+          try {
+            route.component = () => import('@/views' + route.path.replace('/:id', '') + '.vue')
+          } catch (error) {
+            console.info('%c 当前路由 ' + route.path.replace('/:id', '') + '.vue 不存在，因此如法导入组件，请检查接口数据和组件是否匹配，并重新登录，清空缓存!', 'color:red')
           }
+        }
       }
-      if (route.children && route.children.length && !route.IsButton) {
-          route.children = filterAsyncRouter(route.children)
-      }
-      return true
+    }
+    if (route.children && route.children.length && !route.IsButton) {
+      route.children = filterAsyncRouter(route.children)
+    }
+    return true
   })
-  
+
   return accessedRouters
 }
 

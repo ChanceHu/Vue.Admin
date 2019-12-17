@@ -5,12 +5,12 @@
 
 <script>
 export default {
-  data () {
-    return {
-    };
-  },
 
   components: {},
+  data() {
+    return {
+    }
+  },
 
   computed: {},
 

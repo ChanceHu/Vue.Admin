@@ -1,5 +1,5 @@
-import { asyncRoutes, constantRoutes,filterAsyncRouter } from '@/router'
-import {getPermission} from '@/api/permission'
+import { asyncRoutes, constantRoutes, filterAsyncRouter } from '@/router'
+import { getPermission } from '@/api/permission'
 
 /**
  * 使用meta.role确定当前用户是否具有权限
@@ -42,11 +42,11 @@ const state = {
 // mutations改变状态（值）
 const mutations = {
   SET_ROUTES: (state, routes) => {
-    //新添加的路由
+    // 新添加的路由
     state.addRoutes = routes
-    //concat方法用于连接两个或多个数组。
-    //把异步路由（也就是动态获取的路由）和公共路由导航合并（constantRoutes）
-    //全部路由
+    // concat方法用于连接两个或多个数组。
+    // 把异步路由（也就是动态获取的路由）和公共路由导航合并（constantRoutes）
+    // 全部路由
     state.routes = constantRoutes.concat(routes)
   }
 }
@@ -55,25 +55,24 @@ const actions = {
   generateRoutes({ commit }, uId) {
     return new Promise(resolve => {
       getPermission(uId).then(response => {
-        let accessedRoutes;
-        //这是根据角色资源加载导航条roles传入角色资源
-        //accessedRoutes = filterAsyncRoutes(asyncRoutes, roles) 
-        if(response.success){
-          accessedRoutes = filterAsyncRouter(response.response.children)
-        }
-        /*********过滤按钮**********/
-        var f = item => { 
+        let accessedRoutes
+        // 这是根据角色资源加载导航条roles传入角色资源
+        // accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+        accessedRoutes = filterAsyncRouter(response.success?response.response.children:response.data.response.children)
+        
+        /** *******过滤按钮**********/
+        var f = item => {
           if (item['children']) {
-              item['children'] = item['children'].filter(f);
-              return true;
+            item['children'] = item['children'].filter(f)
+            return true
           } else if (item['IsButton']) {
-              return item['IsButton']===false;
-          }  else {
-              return true;
-          } 
-        } 
-        accessedRoutes = accessedRoutes.filter(f); 
-        /**************************/
+            return item['IsButton'] === false
+          } else {
+            return true
+          }
+        }
+        accessedRoutes = accessedRoutes.filter(f)
+        /** ************************/
         commit('SET_ROUTES', accessedRoutes)
         resolve(accessedRoutes)
       })

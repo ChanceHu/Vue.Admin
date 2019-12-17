@@ -96,6 +96,74 @@ div:focus {
   }
 }
 
+//**************************************************//
+//操作栏样式
+.operate-container {
+  margin-top: 20px;
+  .el-card__body{
+    padding: 12px;
+  }
+}
+
+//表格栏样式
+.table-container {
+  margin-top: 20px;
+}
+
+//批量操作栏样式
+.batch-operate-container {
+  display: inline-block;
+  margin-top: 20px;
+}
+
+//表格栏样式
+.table-container {
+  margin-top: 20px;
+}
+
+//批量操作栏样式
+.batch-operate-container {
+  display: inline-block;
+  margin-top: 20px;
+}
+
+//分页栏样式
+.pagination-container {
+  display: inline-block;
+  float: right;
+  margin-top: 20px;
+}
+
+//添加、更新表单样式
+.form-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 720px;
+  padding: 35px 35px 15px 35px;
+  margin: 20px auto; 
+}
+//列表添加按钮
+.operate-container .btn-add {
+  float: right;
+  margin-right: 10px; 
+  
+}
+//搜索条件底部高度
+.filter-line{ 
+  .top-zero{
+    margin-bottom: 0px;
+  }
+}
+
+.btn-heigh{
+  height: 30px;
+  line-height: 30px;
+}
+.color-main{
+  color: #409EFF;
+}
+ 
 aside {
   background: #eef1f6;
   padding: 8px 24px;
@@ -179,6 +247,7 @@ aside {
     vertical-align: middle;
     margin-bottom: 10px;
   }
+ 
 }
 
 //refine vue-multiselect plugin

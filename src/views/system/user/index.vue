@@ -20,30 +20,14 @@
       <el-collapse-transition>
         <div class="filter-line" v-show="isActive" >
           <el-form :inline="true" :model="listQuery" size="small" label-width="100px">
-            <el-form-item  class="top-zero"    label="输入名称">
-              <el-input v-model="listQuery.Name" class="input-width" placeholder="设备名称"></el-input>
+            <el-form-item  class="top-zero"    label="账户">
+              <el-input v-model="listQuery.Account" class="input-width" placeholder="请输入用户账户"></el-input>
             </el-form-item>
-            <el-form-item  class="top-zero"   label="输入编号：">
-              <el-input v-model="listQuery.Number" class="input-width" placeholder="设备编号"></el-input>
-            </el-form-item>
-            <el-form-item  class="top-zero" label="创建时间">
-              <el-date-picker
-                class="input-width"
-                v-model="listQuery.startTime"
-                value-format="yyyy-MM-dd 00:00:00"
-                type="date"
-                placeholder="请选择时间"
-              ></el-date-picker>-
-              <el-date-picker
-                class="input-width"
-                v-model="listQuery.endTime"
-                value-format="yyyy-MM-dd 23:59:59"
-                type="date"
-                placeholder="请选择时间"
-              ></el-date-picker>
+            <el-form-item  class="top-zero"   label="姓名：">
+              <el-input v-model="listQuery.Name" class="input-width" placeholder="请输入用户姓名"></el-input>
             </el-form-item> 
             <el-form-item class="top-zero" label="状态">
-              <el-select v-model="listQuery.StateEnum" placeholder="设备状态" clearable>
+              <el-select v-model="listQuery.StateEnum" placeholder="请选择用户状态" clearable>
                 <el-option
                   v-for="item in typeOptions"
                   :key="item.value"
@@ -61,7 +45,7 @@
       <div class="btn-heigh">
         <i class="el-icon-tickets"></i>
         <span>数据列表</span>
-        <el-button size="mini" type="primary" class="btn-add" @click="handleViewDetail('')">录入设备</el-button> 
+        <el-button size="mini" type="primary" class="btn-add" @click="handleViewDetail('')">添加用户</el-button> 
         <el-upload
           class="upload-demo btn-add"
           ref="upload"
@@ -87,28 +71,33 @@
         style="width: 100%;"
         @selection-change="handleSelectionChange"
         v-loading="listLoading"
-        border
+        border 
+        :row-style="{height:'25px'}" 
       >
         <el-table-column type="selection" width="60" align="center"></el-table-column>
-        <el-table-column label="设备编号" width="180" align="center">
-          <template slot-scope="scope">{{scope.row.number}}</template>
+        <el-table-column label="用户账户" width="180" align="center">
+          <template slot-scope="scope">{{scope.row.uLoginName}}</template>
         </el-table-column>
-        <el-table-column label="设备名称" align="center">
-          <template slot-scope="scope">{{scope.row.name}}</template>
+        <el-table-column label="用户姓名" align="center">
+          <template slot-scope="scope">{{scope.row.uRealName}}</template>
         </el-table-column>
-        <el-table-column  label="归属" width="180" align="center">
-          <template  slot-scope="scope">{{scope.row.attribution}}</template>
+        <el-table-column  label="角色" width="180" align="center">
+          <template slot-scope="scope">
+              <el-tag style="margin-left:5px" v-for="item in scope.row.RoleNames" :key="item.Id" >
+                {{item}}
+              </el-tag>
+          </template>
         </el-table-column>
-        <el-table-column label="地址"  :show-overflow-tooltip="true" width="160" align="center">
-          <template slot-scope="scope">{{scope.row.address}}</template>
+        <el-table-column label="姓名"  :show-overflow-tooltip="true" width="160" align="center">
+          <template slot-scope="scope">{{scope.row.age === 1 ? "女" : "男"}}</template>
         </el-table-column> 
         <el-table-column label="创建时间" width="180" align="center">
-          <template slot-scope="scope">{{scope.row.createdDate | dateFormat}}</template>
+          <template slot-scope="scope">{{scope.row.uCreateTime | dateFormat}}</template>
         </el-table-column>
         <el-table-column label="状态" width="120" align="center">
           <template slot-scope="scope">
             <el-tag size="medium" :type="scope.row.deviceState | MapStyle"> 
-                {{scope.row.deviceState == 1?"待整改":"正常"}}
+                {{scope.row.deviceState == 1?"禁用":"正常"}}
             </el-tag>
           </template>
         </el-table-column>
@@ -162,10 +151,8 @@ import collapse from  '@/utils/collapse.js'//条件折叠
 const defaultListQuery = {
   PageIndex: 1,
   PageSize: 10,
-  Number:null,
-  Name: null,
-  StartTime: null,
-  EndTime: null,
+  Account:null,
+  Name: null, 
   StateEnum: -1, 
 };
 
@@ -332,13 +319,19 @@ export default {
         });
     },
     getList() {
+      this.loadListData();
+    },
+    loadListData(){
       var self = this;
       self.listLoading = true;
       console.log('加载')
       fetchList(self.listQuery).then(response => {  
         self.listLoading = false;
         self.list = response.response.data;
-        self.total = response.response.totalCount; 
+        self.total = response.response.dataCount; 
+      }).catch(error => {
+        self.listLoading = false;
+        console.log(err) 
       });
     },
     downloadDeviceExcel(){

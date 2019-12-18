@@ -1,31 +1,16 @@
 import request from '@/utils/request'
 
-export function login(params) {
-  return request({
-    url: '/Login/JWTToken',
-    method: 'get',
-    params,
-    baseURL: '/blog'
-  })
-}
-
-export function getInfo(token) {
-  return request({
-    url: '/User/GetInfoByToken',
-    method: 'get',
-    params: { token }
-  })
-}
+ 
 export function fetchList(params){
   return request({
-      url:'/User/Get',
+      url:'/Module/Get',
       method:'get',
       params,  
   })
 }
-export function userExcelDown(params){
+export function moduleExcelDown(params){
   return request({
-      url:'/Device/DeviceExcelDown',
+      url:'/Module/ModuleExcelDown',
       method:'get',
       params, 
       transformRequest: [function (data, headers) { 
@@ -35,9 +20,9 @@ export function userExcelDown(params){
       responseType:'blob'
   })
 }
-export function userUpLoad(data){
+export function moduleUpLoad(data){
   return request({
-      url:'/Device/UpLoad',
+      url:'/Module/UpLoad',
       method:'post',
       data, 
       transformRequest: [function (data, headers) { 
@@ -51,9 +36,9 @@ export function userUpLoad(data){
   })
   
 }
-export function deleteUser(params){
+export function deleteModule(params){
   return request({
-      url:'/Device/DeleteDevice',
+      url:'/Module/DeleteModule',
       method:'delete',
       params, 
       transformRequest:[function(data,header){
@@ -61,17 +46,4 @@ export function deleteUser(params){
       }]
   })
 } 
-export function  refreshToken(params) {
-  return request({
-    url:'/Login/RefreshToken',
-    method:'get',
-    params, 
-    
-  })
-}
-export function logout() {
-  return request({
-    url: '/user/logout',
-    method: 'post'
-  })
-}
+ 

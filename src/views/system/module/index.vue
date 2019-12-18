@@ -73,7 +73,7 @@
         :row-style="{height:'25px'}" 
       >
         <el-table-column type="selection" width="60" align="center"></el-table-column>
-        <el-table-column label="接口地址" width="180" align="center">
+        <el-table-column label="接口地址" width="250" align="center">
           <template slot-scope="scope">{{scope.row.LinkUrl}}</template>
         </el-table-column>
         <el-table-column label="描述" align="center">
@@ -85,7 +85,7 @@
         <el-table-column label="创建时间" width="180" align="center">
           <template slot-scope="scope">{{scope.row.CreateTime | dateFormat}}</template>
         </el-table-column>
-        <el-table-column label="状态" width="120" align="center">
+        <el-table-column label="状态" width="80" align="center">
           <template slot-scope="scope"> 
             <i
               :class="scope.row.deviceState === 1 ? 'el-icon-close' : 'el-icon-check'"
@@ -93,8 +93,9 @@
             /> 
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="240" align="center">
+        <el-table-column label="操作" width="180" align="center">
           <template slot-scope="scope"> 
+            <el-button size="mini" @click="handleViewDetail(scope.row.id)">详情</el-button>
             <el-button size="mini" @click="handleViewDetail(scope.row.id)">详情</el-button> 
             <el-button size="mini" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>

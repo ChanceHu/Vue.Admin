@@ -38,7 +38,8 @@ export default {
       device: state => state.app.device,
       showSettings: state => state.settings.showSettings,
       needTagsView: state => state.settings.tagsView,
-      fixedHeader: state => state.settings.fixedHeader
+      fixedHeader: state => state.settings.fixedHeader,
+      fullScreen: state => state.app.fullScreen,
     }),
     classObj() {
       return {

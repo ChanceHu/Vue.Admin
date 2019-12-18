@@ -6,7 +6,9 @@ const state = {
     withoutAnimation: false
   },
   device: 'desktop',
-  size: Cookies.get('size') || 'medium'
+  size: Cookies.get('size') || 'medium',
+  // 横向全屏状态
+  fullScreen: false
 }
 // mutations改变状态（值）
 const mutations = {
@@ -18,6 +20,9 @@ const mutations = {
     } else {
       Cookies.set('sidebarStatus', 0)
     }
+  },
+  TOGGLE_FULLSCREEN: (state) => {
+    state.fullScreen = !state.fullScreen
   },
   CLOSE_SIDEBAR: (state, withoutAnimation) => {
     Cookies.set('sidebarStatus', 0)

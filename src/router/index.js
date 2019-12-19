@@ -350,17 +350,18 @@ export function resetRouter() {
 export function filterAsyncRouter(asyncRouterMap) {
   // 注意这里的 asyncRouterMap 是一个数组
   const accessedRouters = asyncRouterMap.filter(route => {
-    if (route.path && !route.IsButton) {
-      if (route.path === '/' || route.path === '-') { // Layout组件特殊处理
-        route.component = Layout
+    if (route.code && !route.IsButton) {
+      if (route.code === '/' || route.code === '-') { // Layout组件特殊处理
+        route.component = Layout 
       } else {
         try {
-          route.component = _import(route.path.replace('/:id', ''))
+          route.component = _import(route.code.replace('/:id', ''))
+         
         } catch (e) {
           try {
-            route.component = () => import('@/views' + route.path.replace('/:id', '') + '.vue')
+            route.component = () => import('@/views' + route.code.replace('/:id', '') + '.vue')
           } catch (error) {
-            console.info('%c 当前路由 ' + route.path.replace('/:id', '') + '.vue 不存在，因此如法导入组件，请检查接口数据和组件是否匹配，并重新登录，清空缓存!', 'color:red')
+            console.info('%c 当前路由 ' + route.code.replace('/:id', '') + '.vue 不存在，因此如法导入组件，请检查接口数据和组件是否匹配，并重新登录，清空缓存!', 'color:red')
           }
         }
       }

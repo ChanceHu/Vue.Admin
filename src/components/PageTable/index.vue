@@ -16,6 +16,7 @@
         :key="'selection'"
         type="selection"
         width="55"
+        align="center"
       />
       <el-table-column
         v-if="tabIndex"
@@ -96,7 +97,7 @@
             <el-button
               v-if="!item.slot && item.show && (!item.ifRender || item.ifRender(scope.row))"
               :key="index"
-              v-waves
+               
               size="mini"
               :type="item.type"
               :icon="item.icon"
@@ -272,12 +273,12 @@ export default {
           this.listInfo.loading = false
           if (res.success) {
             // 使外面可以访问到表格数据
-            const arr = Array.isArray(res.content) ? res.content : res.content.result
+            const arr = Array.isArray(res.response.data) ? res.response.data : res.response.data
             this.$emit('update:data', arr)
             if (this.pager) {
-              this.listInfo.total = res.content.totals
-              this.listInfo.query.curPage = res.content.curPage - 0
-              this.listInfo.query.pageSize = res.content.pageSize - 0
+              this.listInfo.total = res.response.dataCount
+              this.listInfo.query.curPage = res.response.page - 0
+              this.listInfo.query.pageSize = res.response.PageSize - 0
             }
             // 设置当前选中项
             this.checkedList.forEach(selected => {

@@ -18,29 +18,29 @@
       :field-list="tableInfo.fieldList"
       :list-type-info="listTypeInfo"
       :handle="tableInfo.handle"
-      :checkBox="true"
       @handleClick="handleClick"
       @handleEvent="handleEvent"
     >
       <!-- 自定义插槽显示状态 -->
-      <template v-slot:col-Enabled="scope">
+      <template v-slot:col-status="scope">
         <i
-          :class="scope.row.Enabled === true ? 'el-icon-check' : 'el-icon-close'"
-          :style="{color: scope.row.Enabled === true ? '#67c23a' : '#f56c6c', fontSize: '20px'}"
+          :class="scope.row.status === 1 ? 'el-icon-check' : 'el-icon-close'"
+          :style="{color: scope.row.status === 1 ? '#67c23a' : '#f56c6c', fontSize: '20px'}"
         />
       </template>
       <!-- 自定义插槽状态按钮 -->
       <template v-slot:bt-status="scope">
         <el-button
-          v-if="scope.data.item.show && (!scope.data.item.ifRender || scope.data.item.ifRender(scope.data.row))" 
+          v-if="scope.data.item.show && (!scope.data.item.ifRender || scope.data.item.ifRender(scope.data.row))"
+          v-waves
           size="mini"
-          :type="scope.data.row.Enabled === true ? 'danger' : 'success'"
+          :type="scope.data.row.status - 1 >= 0 ? 'danger' : 'success'"
           :icon="scope.data.item.icon"
           :disabled="scope.data.item.disabled"
           :loading="scope.data.row[scope.data.item.loading]"
           @click="handleClick(scope.data.item.event, scope.data.row)"
         >
-          {{ scope.data.row.Enabled === true ? '停用' : '启用' }}
+          {{ scope.data.row.status - 1 >= 0 ? '停用' : '启用' }}
         </el-button>
       </template>
     </page-table>
@@ -113,7 +113,7 @@ export default {
       deleteApi,
       // 相关列表
       listTypeInfo: {
-        
+        tagTypeList: [],
         statusList: [
           { key: '启用', value: 1 },
           { key: '停用', value: 0 }
@@ -125,10 +125,11 @@ export default {
           tag_type_id: '',
           status: ''
         },
-        list: [ 
-          { type: 'input', label: '角色名', value: 'name' },
+        list: [
+          { type: 'select', label: '技术类型', value: 'tag_type_id', list: 'tagTypeList' },
+          { type: 'input', label: '别名', value: 'name' },
           { type: 'button', label: '搜索', btType: 'primary', icon: 'el-icon-search', event: 'search', show: true },
-          { type: 'button', label: '添加', btType: 'primary', icon: 'el-icon-plus', event: 'create', show: true }
+          { type: 'button', label: '添加', btType: 'primary', icon: 'el-icon-plus', event: 'create', show: false }
         ]
       },
       // 表格相关
@@ -137,23 +138,23 @@ export default {
         initCurpage: 1,
         data: [],
         fieldList: [
-          { label: '名称', value: 'Name'  },
-          { label: '说明', value: 'Description' },
-          { label: '排序', value: 'OrderSort', width: 80 },
-          { label: '状态', value: 'Enabled', width: 90, type: 'slot' },
-          //{label: '创建人', value: 'create_user'},
-          { label: '创建时间', value: 'CreateTime', width: 180 },
+          { label: '技术类型', value: 'tag_type_id', list: 'tagTypeList' },
+          { label: '别名', value: 'name' },
+          { label: '排序', value: 'sort', width: 80 },
+          { label: '状态', value: 'status', width: 90, type: 'slot' },
+          // {label: '创建人', value: 'create_user'},
+          { label: '创建时间', value: 'create_time', width: 180 },
           // {label: '更新人', value: 'update_user'},
-          { label: '更新时间', value: 'ModifyTime', width: 180 }
+          { label: '更新时间', value: 'update_time', width: 180 }
         ],
         handle: {
           fixed: 'right',
           label: '操作',
           width: '280',
           btList: [
-            { label: '启用', type: 'success', icon: 'el-icon-refresh', event: 'status', loading: 'statusLoading', show: true, slot: true },
-            { label: '编辑', type: '', icon: 'el-icon-edit', event: 'update', show: true },
-            { label: '删除', type: 'danger', icon: 'el-icon-delete', event: 'delete', show: true }
+            { label: '启用', type: 'success', icon: 'el-icon-albb-process', event: 'status', loading: 'statusLoading', show: false, slot: true },
+            { label: '编辑', type: '', icon: 'el-icon-edit', event: 'update', show: false },
+            { label: '删除', type: 'danger', icon: 'el-icon-delete', event: 'delete', show: false }
           ]
         }
       },
@@ -172,7 +173,7 @@ export default {
           // update_time: '' // 修改时间
         },
         fieldList: [
-          { label: '技术类型', value: 'tag_type_id', type: 'select', filterable: true, required: true },
+          { label: '技术类型', value: 'tag_type_id', type: 'select', list: 'tagTypeList', filterable: true, required: true },
           { label: '别名', value: 'name', type: 'input' },
           { label: '排序', value: 'sort', type: 'input', required: true },
           { label: '状态', value: 'status', type: 'select', list: 'statusList', required: true }
@@ -231,10 +232,10 @@ export default {
   methods: {
     // 初始化数据权限
     initDataPerms () {
-      // const btList = this.tableInfo.handle.btList
-      // const btList1 = this.filterInfo.list
-      // this.$initDataPerms('techSquare', btList)
-      // this.$initDataPerms('techSquare', btList1)
+      const btList = this.tableInfo.handle.btList
+      const btList1 = this.filterInfo.list
+      this.$initDataPerms('techSquare', btList)
+      this.$initDataPerms('techSquare', btList1)
     },
     // 初始化验证
     initRules () {
@@ -377,8 +378,8 @@ export default {
           if (!data) return
           data.forEach(item => {
             this.$set(item, 'statusLoading', false)
-            item.CreateTime = this.$fn.switchTime(item.CreateTime, 'YYYY-MM-DD hh:mm:ss')
-            item.ModifyTime = this.$fn.switchTime(item.ModifyTime, 'YYYY-MM-DD hh:mm:ss')
+            item.create_time = this.$fn.switchTime(item.create_time, 'YYYY-MM-DD hh:mm:ss')
+            item.update_time = this.$fn.switchTime(item.update_time, 'YYYY-MM-DD hh:mm:ss')
           })
           break
       }

@@ -21,7 +21,11 @@ import * as filters from './filters' // global filters
 
 import formValidate from '../src/utils/formValidate'
 
+import prototype from '../src/utils/prototype' // 挂载在原型上的方法
+
 Vue.use(formValidate)
+
+Vue.use(prototype)
 
 /**
  * If you don't want to use mock-server

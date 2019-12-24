@@ -1,0 +1,88 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system,"Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB",
+  "WenQuanYi Micro Hei","Microsoft Yahei",sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  font-size: 62.5%;
+  overflow: hidden;
+  // background-color: #fbf9fe;
+  -webkit-text-size-adjust: none; // 全局字体可设置小于12px
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); // 禁止ios点击元素的背景
+}
+.login-container{
+  height: 100%; // 继承父级高度
+}
+.main-container{
+  display: flex;
+  flex-direction: column;
+  height: 100%; // 继承父级高度
+  .app-main{
+    flex: 1;
+    overflow: auto;
+    .app-container{
+      position: relative;
+      padding: 20px;
+      height: 100%;
+    }
+  }
+}
+
+$treeWidth: 240px;
+
+.app-container{
+  .left{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    width: $treeWidth;
+    left: 15px;
+    top: 20px;
+    bottom: 15px;
+    .page-tree{
+      flex: 1;
+      width: $treeWidth;
+      overflow: auto;
+      border: 1px solid rgb(200, 200, 200);
+      .contextmenu {
+        margin: 0;
+        background: #fff;
+        z-index: 100;
+        position: fixed;
+        list-style-type: none;
+        padding: 5px 0;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #333;
+        box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
+        li {
+          margin: 0;
+          padding: 7px 16px;
+          cursor: pointer;
+          &:hover {
+            background: #eee;
+          }
+        }
+      }
+    }
+  }
+  .right{
+    margin-left: 250px
+  }
+}
+
+.disabled-select {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Chrome/Safari/Opera */
+  -khtml-user-select: none; /* Konqueror */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+  not supported by any browser */
+}

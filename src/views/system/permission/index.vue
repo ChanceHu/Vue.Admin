@@ -215,11 +215,11 @@ export default {
         baseData: [], // 树的基础数据，从组件中获取到
         // 加载相关数据
         loadInfo: {
-          key: 'id', // 节点id
-          label: 'name', // 节点名称字段
+          key: 'Id', // 节点id
+          label: 'Name', // 节点名称字段
           api: getAllApi, // 获取数据的接口
           params: { data: [{ key: 'type', value: 1 }], type: 'query' },
-          resFieldList: ['content'] // 数据所在字段
+          resFieldList: ['response'] // 数据所在字段
         },
         leftClickData: {},
         rightClickData: {},
@@ -230,20 +230,20 @@ export default {
         title: '菜单详情',
         data: {},
         fieldList: [
-          { label: '所属菜单', value: 'pid', list: 'treeList' },
-          { label: '菜单类型', value: 'type', list: 'menuTypeList' },
+          { label: '所属菜单', value: 'Pid', list: 'treeList' },
+          { label: '菜单类型', value: 'Type', list: 'menuTypeList' },
           { label: '菜单编码', value: 'code' },
-          { label: '菜单名称', value: 'name' },
-          { label: '菜单组件', value: 'component', list: 'componentList' },
-          { label: '菜单图标', value: 'icon' },
+          { label: '菜单名称', value: 'Name' },
+          { label: '菜单组件', value: 'Component', list: 'componentList' },
+          { label: '菜单图标', value: 'Icon' },
           { label: '重定向路径', value: 'redirect' },
-          { label: '排序', value: 'sort' },
-          { label: '描述', value: 'desc' },
-          { label: '状态', value: 'status', list: 'statusList' },
-          { label: '创建人', value: 'create_user_name' },
-          { label: '创建时间', value: 'create_time' },
-          { label: '更新人', value: 'update_user_name' },
-          { label: '更新时间', value: 'update_time' }
+          { label: '排序', value: 'OrderSort' },
+          { label: '描述', value: 'Description' },
+          { label: '状态', value: 'Enabled', list: 'statusList' },
+          { label: '创建人', value: 'CreateBy' },
+          { label: '创建时间', value: 'CreateTime' },
+          { label: '更新人', value: 'ModifyBy' },
+          { label: '更新时间', value: 'ModifyTime' }
         ]
       },
       // 表格相关
@@ -355,8 +355,7 @@ export default {
     }
   },
   computed: {//computed计算属性：只有在它的相关依赖发生改变时才会重新求值，即dataPerms中的数据发生变化时才会重新求值
-    ...mapGetters([
-      'userInfo',
+    ...mapGetters([ 
       'dataPerms'
     ])
   },
@@ -400,8 +399,8 @@ export default {
     'treeInfo.baseData' (val) {
       // 得到树状数据
       this.treeInfo.treeData = this.$fn.getTreeArr({
-        key: 'id',
-        pKey: 'pid',
+        key: 'Id',
+        pKey: 'Pid',
         data: val
       })
       this.initTree(val)
@@ -452,15 +451,15 @@ export default {
         // 容错处理
         if (val[0]) {
           // 设置默认
-          treeInfo.defaultClicked = { id: val[0].id }
-          treeInfo.defaultHighLight = val[0].id
-          treeInfo.defaultExpanded = [val[0].id]
+          treeInfo.defaultClicked = { id: val[0].Id }
+          treeInfo.defaultHighLight = val[0].Id
+          treeInfo.defaultExpanded = [val[0].Id]
         }
       }
       // 设置列表
       this.listTypeInfo.treeList = val.map(item => {
-        item.key = item.name
-        item.value = item.id
+        item.key = item.Name
+        item.value = item.Id
         return item
       })
     },

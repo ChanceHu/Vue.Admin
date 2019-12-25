@@ -83,11 +83,11 @@ service.interceptors.response.use(
     var originalRequest = error.config
     if (error.code == 'ECONNABORTED' && error.message.indexOf('timeout') != -1 && !originalRequest._retry) {
       Message({
-        message: '请求超时！',
+        message: '请求超时！请稍后刷新重试。',
         type: 'error'
       })
       originalRequest._retry = true
-      return null
+      return Promise.reject(error)
     }
     if (error.response) {
       if (error.response.status == 401) {

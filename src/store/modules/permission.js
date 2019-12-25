@@ -37,7 +37,8 @@ export function filterAsyncRoutes(routes, roles) {
 
 const state = {
   routes: [],
-  addRoutes: []
+  addRoutes: [],
+  dataPerms: []
 }
 // mutations改变状态（值）
 const mutations = {
@@ -48,6 +49,10 @@ const mutations = {
     // 把异步路由（也就是动态获取的路由）和公共路由导航合并（constantRoutes）
     // 全部路由
     state.routes = constantRoutes.concat(routes)
+  },
+  // 设置按钮权限
+  SET_DATAPERMS: (state, dataPerms) => {
+    state.dataPerms = dataPerms
   }
 }
 // actions触发状态变更方法
@@ -59,7 +64,7 @@ const actions = {
         // 这是根据角色资源加载导航条roles传入角色资源
         // accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
         accessedRoutes = filterAsyncRouter(response.success?response.response.children:response.data.response.children)
-        
+        const dataPerms =response.success?response.response.permsBtn.map(item => item.code):response.data.response.permsBtn.map(item => item.code); 
         /** *******过滤按钮**********/
         var f = item => {
           if (item['children']) {
@@ -73,6 +78,7 @@ const actions = {
         }
         accessedRoutes = accessedRoutes.filter(f)
         /** ************************/
+        commit('SET_DATAPERMS', dataPerms)
         commit('SET_ROUTES', accessedRoutes)
         resolve(accessedRoutes)
       })

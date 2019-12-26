@@ -1,4 +1,4 @@
-import { asyncRoutes, constantRoutes, filterAsyncRouter } from '@/router'
+import { asyncRoutes, constantRoutes, filterAsyncRouter1 } from '@/router'
 import { getPermission } from '@/api/permission'
 
 /**
@@ -63,8 +63,8 @@ const actions = {
         let accessedRoutes
         // 这是根据角色资源加载导航条roles传入角色资源
         // accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-        accessedRoutes = filterAsyncRouter(response.success?response.response.children:response.data.response.children)
-        const dataPerms =response.success?response.response.permsBtn.map(item => item.Code):response.data.response.permsBtn.map(item => item.Code); 
+        accessedRoutes = filterAsyncRouter1(response.success?response.response.permsList:response.data.response.permsList)
+        const dataPerms =response.success?response.response.btnList.map(item => item.Code):response.data.response.btnList.map(item => item.Code); 
         /** *******过滤按钮**********/
         var f = item => {
           if (item['children']) {

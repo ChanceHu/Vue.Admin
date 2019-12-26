@@ -93,7 +93,7 @@
             /> 
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180" align="center">
+        <el-table-column label="操作" width="220" align="center">
           <template slot-scope="scope"> 
             <el-button size="mini" @click="handleViewDetail(scope.row.id)">详情</el-button>
             <el-button size="mini" @click="handleViewDetail(scope.row.id)">详情</el-button> 

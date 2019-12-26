@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+import globalFn from '@/utils/utils'
 Vue.use(Router)
 
 /* Layout */
@@ -337,16 +337,7 @@ const createRouter = () => new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
-// 得到页面路径
-function getPath (arr, child, code) {
-  const pItem = arr.find(item => child.pid === item.id)
-  // 当前元素还存在父节点, 且父节点不为根节点
-  if (arr.find(item => pItem.pid === item.id && item.pid > -1)) {
-    getPath(arr, pItem, `${pItem.code}/${code}`)
-  } else {
-    return `${pItem.code}/${code}`
-  }
-}
+
 const router = createRouter()
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
@@ -360,6 +351,7 @@ export function filterAsyncRouter(asyncRouterMap) {
   // 注意这里的 asyncRouterMap 是一个数组
   const accessedRouters = asyncRouterMap.filter(route => {
     if (route.code && !route.IsButton) {
+      route.path = '/'+route.path;
       if (route.code === '/' || route.code === '-') { // Layout组件特殊处理
         route.component = Layout 
       } else {
@@ -383,25 +375,37 @@ export function filterAsyncRouter(asyncRouterMap) {
 
   return accessedRouters
 }
+function getPath (arr, child, code) {
+  const pItem = arr.find(item => child.Pid === item.Id)
+  // 当前元素还存在父节点, 且父节点不为根节点
+  if (arr.find(item => pItem.Pid === item.Id && item.Pid > -1)) {
+    getPath(arr, pItem, `${pItem.Code}/${code}`)
+  } else {
+    return `${pItem.Code}/${code}`
+  }
+}
 export function filterAsyncRouter1(asyncRouterMap) {
-    baseMenu = menu.map((item, index) => {
+  let baseMenu = [];let treeMenu = []
+  baseMenu = asyncRouterMap.map((item, index) => {
     // 对基础数据的处理
     item.meta = {}
-    item.meta.title = item.name
-    item.meta.code = item.code
-    item.meta.icon = item.icon
-    item.meta.id = item.id
+    item.meta.requireAuth = true
+    item.meta.NoTabPage = item.IsHide ? true : false
+    item.meta.title = item.Name
+    item.meta.code = item.Code
+    item.meta.icon = item.Icon
+    item.meta.id = item.Id
     // 使路由名字具有唯一性
-    item.name = item.name + index
+    item.name = item.Code
     // 设置对应的页面路径
-    item.path = '/' + item.code
+    item.path = '/' + item.Code
     // 设置页面对应的组件 对应组件: -1. 根节点 1. 页面组件 2.默认布局 3456...扩展布局
-    switch (item.component) {
+    switch (item.ComponentType) {
       case -1:
-        console.log('根节点，已经过滤掉了')
+        console.log('根节点，已经过滤掉了') 
         break
       case 1:
-        item.component = resolve => require([`@/views/${getPath(menu, item, item.code)}/index`], resolve)
+        item.component = resolve => require([`@/views/${getPath(asyncRouterMap, item, item.Code)}/index`], resolve)
         break
       case 2:
         item.component = Layout
@@ -411,19 +415,20 @@ export function filterAsyncRouter1(asyncRouterMap) {
         break
     }
     return {
-      id: item.id,
-      pid: item.pid,
+      id: item.Id,
+      pid: item.Pid,
       path: item.path,
       component: item.component,
       name: item.name,
       meta: item.meta,
-      sort: item.sort
+      sort: item.OrderSort
     }
   })
   // 数据排序
   baseMenu = baseMenu.sort((a, b) => a.sort - b.sort)
   // 得到树状数组
   treeMenu = globalFn.getTreeArr({ key: 'id', pKey: 'pid', data: baseMenu, jsonData: false })
+  return treeMenu
 }
 
 

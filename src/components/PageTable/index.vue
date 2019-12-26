@@ -77,22 +77,11 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column
-        v-if="handle"
-        :key="'handle'"
-        :fixed="handle.fixed"
-        align="center"
-        :label="handle.label"
-        :width="handle.width"
-      >
+      <el-table-column v-if="handle" :key="'handle'" :fixed="handle.fixed"  align="center" :label="handle.label" :width="handle.width" >
         <template v-slot="scope">
           <template v-for="(item, index) in handle.btList">
             <!-- 自定义操作类型 -->
-            <slot
-              v-if="item.slot"
-              :name="'bt-' + item.event"
-              :data="{item, row: scope.row}"
-            />
+            <slot v-if="item.slot" :name="'bt-' + item.event" :data="{item, row: scope.row}" />
             <!-- 操作按钮 -->
             <el-button
               v-if="!item.slot && item.show && (!item.ifRender || item.ifRender(scope.row))"

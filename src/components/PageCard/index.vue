@@ -1,30 +1,13 @@
 <template>
-  <el-card
-    class="page-card"
-    :class="className"
-  >
-    <div
-      slot="header"
-      class="clearfix"
-    >
+  <el-card class="page-card" :class="className" >
+    <div slot="header"  class="clearfix" >
       <!-- <span class="title" :style="`color: ${theme}`">{{ title }}</span> -->
       <span class="title" style='color:#1890ff'>{{ title }}</span>
-      <i
-        :title="title"
-        class="el-icon-info"
-        style="float: right; padding: 3px 0; color: rgb(150, 150, 150)"
-      />
+      <i :title="title" class="el-icon-info" style="float: right; padding: 3px 0; color: rgb(150, 150, 150)" />
     </div>
     <ul class="info">
-      <li
-        v-for="(item, index) in fieldList"
-        :key="index"
-        class="item"
-      >
-        <span
-          class="label"
-          :style="`width: ${lableWidth}; text-align: ${textAligin};`"
-        >{{ item.label }}</span>
+      <li v-for="(item, index) in fieldList" :key="index"  class="item"  >
+        <span class="label" :style="`width: ${lableWidth}; text-align: ${textAligin};`" >{{ item.label }}</span>
         <span class="value">{{ $fn.getDataName({dataList: listTypeInfo[item.list], value: 'value', label: 'key', data: data[item.value]}) || '-' }}</span>
       </li>
     </ul>

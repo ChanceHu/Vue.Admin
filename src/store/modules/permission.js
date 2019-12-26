@@ -64,7 +64,7 @@ const actions = {
         // 这是根据角色资源加载导航条roles传入角色资源
         // accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
         accessedRoutes = filterAsyncRouter(response.success?response.response.children:response.data.response.children)
-        const dataPerms =response.success?response.response.permsBtn.map(item => item.code):response.data.response.permsBtn.map(item => item.code); 
+        const dataPerms =response.success?response.response.permsBtn.map(item => item.Code):response.data.response.permsBtn.map(item => item.Code); 
         /** *******过滤按钮**********/
         var f = item => {
           if (item['children']) {

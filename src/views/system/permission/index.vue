@@ -36,14 +36,14 @@
           <page-card :class="'card'" :title="cardInfo.title" :data.sync="cardInfo.data"  :field-list="cardInfo.fieldList" :list-type-info="listTypeInfo" />
         </el-tab-pane>
         <!-- 点击页面组件时显示 -->
-        <el-tab-pane v-if="treeInfo.leftClickData.component === 1" label="数据权限" name="menuData" >
+        <el-tab-pane v-if="treeInfo.leftClickData.ComponentType === 1" label="数据权限" name="menuData" >
           <template>
             <div class="">
-              <el-button v-if="dataPerms.includes('menuMan:persCreate')" v-waves icon="el-icon-plus" 
-              type="primary" style="margin-bottom: 10px;" @click="handleClick('persCreate')" >  
+              <el-button v-if="dataPerms.includes('permission:btnCreate')"   icon="el-icon-plus" 
+              type="primary" style="margin-bottom: 10px;" size="small" @click="handleClick('btnCreate')" >  
                 添加 
               </el-button>
-              <el-button v-waves icon="el-icon-refresh" type="primary" style="margin-bottom: 10px;" @click="tableInfo.refresh = Math.random()"  >
+              <el-button   icon="el-icon-refresh" type="primary" size="small" style="margin-bottom: 10px;" @click="tableInfo.refresh = Math.random()"  >
                 刷新
               </el-button>
             </div>
@@ -54,7 +54,7 @@
               :pager="tableInfo.pager"
               :data.sync="tableInfo.data"
               :api="dataPermsGetAllApi"
-              :query="{menuId: treeInfo.leftClickData.id}"
+              :query="{permsId: treeInfo.leftClickData.Id}"
               :field-list="tableInfo.fieldList"
               :list-type-info="listTypeInfo"
               :handle="tableInfo.handle"
@@ -117,7 +117,7 @@
         </template>
       </page-form>
       <page-form
-        v-if="dialogInfo.type === 'persCreate' || dialogInfo.type === 'persUpdate'"
+        v-if="dialogInfo.type === 'btnCreate' || dialogInfo.type === 'persUpdate'"
         :ref-obj.sync="dataControlFormInfo.ref"
         :data="dataControlFormInfo.data"
         :field-list="dataControlFormInfo.fieldList"
@@ -254,12 +254,12 @@ export default {
         pager: false,
         data: [],
         fieldList: [
-          { label: '所属菜单', value: 'menu_id', list: 'treeList', required: true },
-          { label: '功能类型', value: 'type', list: 'dataControlTypeList', required: true },
-          { label: '功能编码', value: 'code', required: true, minWidth: 160 },
-          { label: '功能名称', value: 'name', required: true },
-          { label: '功能api', value: 'api', required: true },
-          { label: '请求方式', value: 'method', list: 'reqTypeList', required: true }
+          { label: '所属菜单', value: 'PermsId', list: 'treeList', required: true },
+          { label: '功能类型', value: 'Type', list: 'dataControlTypeList', required: true },
+          { label: '功能编码', value: 'Code', required: true, minWidth: 160 },
+          { label: '功能名称', value: 'Name', required: true },
+          { label: '功能api', value: 'Api', required: true },
+          { label: '请求方式', value: 'Method', list: 'reqTypeList', required: true }
           // {label: '创建人', value: 'create_user'},
           // {label: '创建时间', value: 'create_time', minWidth: 180},
           // {label: '更新人', value: 'update_user'},
@@ -270,8 +270,8 @@ export default {
           label: '操作',
           width: '200',
           btList: [
-            { label: '编辑', type: '', icon: 'el-icon-edit', event: 'persUpdate', show: false },
-            { label: '删除', type: 'danger', icon: 'el-icon-delete', event: 'persDelete', show: false }
+            { label: '编辑', type: '', icon: 'el-icon-edit', event: 'btnUpdate', show: false },
+            { label: '删除', type: 'danger', icon: 'el-icon-delete', event: 'btnDelete', show: false }
           ]
         }
       },
@@ -341,7 +341,7 @@ export default {
         title: {
           create: '添加菜单',
           update: '编辑菜单',
-          persCreate: '添加菜单权限',
+          btnCreate: '添加菜单权限',
           persUpdate: '编辑菜单权限'
         },
         visible: false,
@@ -422,7 +422,7 @@ export default {
     // 初始化数据权限
     initDataPerms () {
       const btList = this.tableInfo.handle.btList
-      this.$initDataPerms('menuMan', btList)
+      this.$initDataPerms('permission', btList)
     },
     // 初始化验证
     initRules () {
@@ -474,11 +474,11 @@ export default {
       const formInfo = this.formInfo
       const dataControlFormInfo = this.dataControlFormInfo
       switch (event) {
-        case 'persCreate':
+        case 'btnCreate':
           dialogInfo.type = event
           dialogInfo.visible = true
           // 设置参数
-          dataControlFormInfo.data.menu_id = treeInfo.leftClickData.id
+          dataControlFormInfo.data.menu_id = treeInfo.leftClickData.Id
           break
         case 'persUpdate':
           dialogInfo.type = event
@@ -508,7 +508,7 @@ export default {
           if (type === 'create' || type === 'update') {
             params = formInfo.data
             ref = formInfo.ref
-          } else if (type === 'persCreate' || type === 'persUpdate') {
+          } else if (type === 'btnCreate' || type === 'persUpdate') {
             params = dataControlFormInfo.data
             ref = dataControlFormInfo.ref
           } else {
@@ -520,7 +520,7 @@ export default {
                 api = createApi
               } else if (type === 'update') {
                 api = updateApi
-              } else if (type === 'persCreate') {
+              } else if (type === 'btnCreate') {
                 api = dataPermsCreateApi
               } else if (type === 'persUpdate') {
                 api = dataPermsUpdateApi
@@ -544,7 +544,7 @@ export default {
                     treeInfo.defaultExpandedAsyc = [params.pid]
                     // 刷新树
                     treeInfo.refresh = Math.random()
-                  } else if (type === 'persCreate' || type === 'persUpdate') {
+                  } else if (type === 'btnCreate' || type === 'persUpdate') {
                     tableInfo.refresh = Math.random()
                   }
                 }
@@ -561,7 +561,7 @@ export default {
     getApiType (type) {
       if (type === 'create' || type === 'update') {
         return type
-      } else if (type === 'persCreate') {
+      } else if (type === 'btnCreate') {
         return 'create'
       } else if (type === 'persUpdate') {
         return 'update'
@@ -577,9 +577,10 @@ export default {
         case 'list':
           if (!data) return
           data.forEach(item => {
-            item.create_time = this.$fn.switchTime(item.create_time, 'YYYY-MM-DD hh:mm:ss')
-            item.update_time = this.$fn.switchTime(item.update_time, 'YYYY-MM-DD hh:mm:ss')
+            item.CreateTime = this.$fn.switchTime(item.CreateTime, 'YYYY-MM-DD hh:mm:ss')
+            item.ModifyTime = this.$fn.switchTime(item.ModifyTime, 'YYYY-MM-DD hh:mm:ss')
           })
+          
           break
         case 'tabClick':
         // 懒加载，第一次点击，刷新列表
@@ -590,6 +591,7 @@ export default {
           break
           // 左键点击的处理
         case 'leftClick':
+          console.log(this.dataPerms)
           const obj = JSON.parse(JSON.stringify(data.data))
           if (obj.columns === -1) {
             obj.columns = '无限'
@@ -597,8 +599,8 @@ export default {
           if (obj.users === -1) {
             obj.users = '无限'
           }
-          obj.create_time = this.$fn.switchTime(obj.create_time, 'YYYY-MM-DD hh:mm:ss')
-          obj.update_time = this.$fn.switchTime(obj.update_time, 'YYYY-MM-DD hh:mm:ss')
+          obj.CreateTime = this.$fn.switchTime(obj.CreateTime, 'YYYY-MM-DD hh:mm:ss')
+          obj.ModifyTime = this.$fn.switchTime(obj.ModifyTime, 'YYYY-MM-DD hh:mm:ss')
           cardInfo.data = obj
           treeInfo.leftClickData = obj
           // tab为数据权限页面，点击刷新表格
@@ -607,7 +609,7 @@ export default {
             tableInfo.refresh = Math.random()
           }
           // 点击不为页面组件，tab显示为菜单详情
-          if (obj.component !== 1) {
+          if (obj.ComponentType !== 1) {
             this.tabActive = 'menu'
           }
           break
@@ -617,14 +619,14 @@ export default {
           // 根节点
           if (data.node.level === 1) {
             arr = [
-              { name: '添加下级菜单', type: 'create', data: data.data, node: data.node, vm: data.vm, show: this.dataPerms.includes('menuMan:create') },
+              { name: '添加下级菜单', type: 'create', data: data.data, node: data.node, vm: data.vm, show: this.dataPerms.includes('permission:create') },
               { name: '刷新', type: 'refreshTree', data: null, node: null, vm: null, show: true }
             ]
           } else {
             arr = [
-              { name: '添加下级菜单', type: 'create', data: data.data, node: data.node, vm: data.vm, show: this.dataPerms.includes('menuMan:create') },
-              { name: '编辑', type: 'update', data: data.data, node: data.node, vm: data.vm, show: this.dataPerms.includes('menuMan:update') },
-              { name: '删除', type: 'delete', data: data.data, node: data.node, vm: data.vm, show: this.dataPerms.includes('menuMan:delete') },
+              { name: '添加下级菜单', type: 'create', data: data.data, node: data.node, vm: data.vm, show: this.dataPerms.includes('permission:create') },
+              { name: '编辑', type: 'update', data: data.data, node: data.node, vm: data.vm, show: this.dataPerms.includes('permission:update') },
+              { name: '删除', type: 'delete', data: data.data, node: data.node, vm: data.vm, show: this.dataPerms.includes('permission:delete') },
               { name: '刷新', type: 'refreshTree', data: null, node: null, vm: null, show: true }
             ]
           }

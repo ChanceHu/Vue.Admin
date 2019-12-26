@@ -337,7 +337,16 @@ const createRouter = () => new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
-
+// 得到页面路径
+function getPath (arr, child, code) {
+  const pItem = arr.find(item => child.pid === item.id)
+  // 当前元素还存在父节点, 且父节点不为根节点
+  if (arr.find(item => pItem.pid === item.id && item.pid > -1)) {
+    getPath(arr, pItem, `${pItem.code}/${code}`)
+  } else {
+    return `${pItem.code}/${code}`
+  }
+}
 const router = createRouter()
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
@@ -374,5 +383,48 @@ export function filterAsyncRouter(asyncRouterMap) {
 
   return accessedRouters
 }
+export function filterAsyncRouter1(asyncRouterMap) {
+    baseMenu = menu.map((item, index) => {
+    // 对基础数据的处理
+    item.meta = {}
+    item.meta.title = item.name
+    item.meta.code = item.code
+    item.meta.icon = item.icon
+    item.meta.id = item.id
+    // 使路由名字具有唯一性
+    item.name = item.name + index
+    // 设置对应的页面路径
+    item.path = '/' + item.code
+    // 设置页面对应的组件 对应组件: -1. 根节点 1. 页面组件 2.默认布局 3456...扩展布局
+    switch (item.component) {
+      case -1:
+        console.log('根节点，已经过滤掉了')
+        break
+      case 1:
+        item.component = resolve => require([`@/views/${getPath(menu, item, item.code)}/index`], resolve)
+        break
+      case 2:
+        item.component = Layout
+        break
+      default:
+        item.component = resolve => require(['@/views/error-page/404'], resolve)
+        break
+    }
+    return {
+      id: item.id,
+      pid: item.pid,
+      path: item.path,
+      component: item.component,
+      name: item.name,
+      meta: item.meta,
+      sort: item.sort
+    }
+  })
+  // 数据排序
+  baseMenu = baseMenu.sort((a, b) => a.sort - b.sort)
+  // 得到树状数组
+  treeMenu = globalFn.getTreeArr({ key: 'id', pKey: 'pid', data: baseMenu, jsonData: false })
+}
+
 
 export default router

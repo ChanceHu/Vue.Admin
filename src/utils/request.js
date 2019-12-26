@@ -134,12 +134,12 @@ service.interceptors.response.use(
         }
       }
       // 403 无权限
-      if (error.response.status == 403) {
+      if (error.response.status == 403) { 
         Message({
           message: '失败！该操作无权限',
           type: 'error'
         })
-        return null
+        return Promise.reject(error)
       }else{
         Message({
           message: error.message,

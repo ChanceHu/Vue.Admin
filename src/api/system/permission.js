@@ -119,7 +119,7 @@ export function getRoleDataPermsApi (params) {
 // 获取所有
 export function dataPermsGetAllApi (params) {
   return request({
-    url: `/dataPerms/getAll`,
+    url: `/PermissionButton/Get`,
     method: 'get',
     params
   })

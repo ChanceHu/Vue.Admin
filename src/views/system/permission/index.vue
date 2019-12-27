@@ -86,31 +86,15 @@
         :list-type-info="listTypeInfo"
       >
         <!-- 自定义插槽--选择图标 -->
-        <template v-slot:form-icon>
-          <el-select
-            v-model="formInfo.data.icon"
-            placeholder="请选择图标"
-            filterable
-            clearable
-          >
+        <template v-slot:form-Icon>
+          <el-select v-model="formInfo.data.Icon" placeholder="请选择图标" filterable clearable >
             <template slot="prefix">
-              <i
-                v-if="formInfo.data.icon"
-                :class="'header-icon ' + formInfo.data.icon"
-                style="vertical-align: middle; font-size: 20px; color: black"
-              />
+              <i v-if="formInfo.data.Icon" :class="'header-icon ' + formInfo.data.Icon" style="vertical-align: middle; font-size: 20px; color: black" />
             </template>
-            <el-option
-              v-for="(item, index) in listTypeInfo.iconList"
-              :key="index"
-              :label="item.key"
-              :value="item.value"
-            >
+            <el-option v-for="(item, index) in listTypeInfo.iconList" :key="index" :label="item.key" :value="item.value" >
               <slot>
-                <i
-                  :class="item.value"
-                  style="display: inline-block; vertical-align: middle; width: 30px; font-size: 20px"
-                />{{ item.class }}
+                <i :class="item.value" style="display: inline-block; vertical-align: middle; width: 30px; font-size: 20px" />
+                {{ item.class }}
               </slot>
             </el-option>
           </el-select>
@@ -169,8 +153,8 @@ export default {
           return item
         }),
         statusList: [
-          { key: '启用', value: 1 },
-          { key: '停用', value: 0 }
+          { key: '启用', value: true },
+          { key: '停用', value: false }
         ],
         menuTypeList: [
           { key: '平台端', value: 1 },
@@ -232,9 +216,9 @@ export default {
         fieldList: [
           { label: '所属菜单', value: 'Pid', list: 'treeList' },
           { label: '菜单类型', value: 'Type', list: 'menuTypeList' },
-          { label: '菜单编码', value: 'code' },
+          { label: '菜单编码', value: 'Code' },
           { label: '菜单名称', value: 'Name' },
-          { label: '菜单组件', value: 'Component', list: 'componentList' },
+          { label: '菜单组件', value: 'ComponentType', list: 'componentList' },
           { label: '菜单图标', value: 'Icon' },
           { label: '重定向路径', value: 'redirect' },
           { label: '排序', value: 'OrderSort' },
@@ -279,33 +263,33 @@ export default {
       formInfo: {
         ref: null,
         data: {
-          id: '', // *唯一ID
-          pid: '', // *父ID
-          type: '', // *菜单类型
-          code: '', // *菜单编码
-          name: '', // *菜单名称
-          component: '', // *菜单组件
-          icon: '', // 菜单图标
+          Id: '', // *唯一ID
+          Pid: '', // *父ID
+          Type: '', // *菜单类型
+          Code: '', // *菜单编码
+          Name: '', // *菜单名称
+          ComponentType: '', // *菜单组件
+          Icon: '', // 菜单图标
           redirect: '', // 重定向路径
-          sort: '', // *排序
-          desc: '', // 描述
-          status: 1 // *状态: 0：停用，1：启用(默认为1)',
+          OrderSort: '', // *排序
+          Description: '', // 描述
+          Enabled: true // *状态: 0：停用，1：启用(默认为1)',
           // create_user: '', // 创建人
           // create_time: '', // 创建时间
           // update_user: '', // 修改人
           // update_time: '' // 修改时间
         },
         fieldList: [
-          { label: '所属菜单', value: 'pid', type: 'select', list: 'treeList' },
-          { label: '菜单类型', value: 'type', type: 'tag', list: 'menuTypeList' },
-          { label: '菜单编码', value: 'code', type: 'input' },
-          { label: '菜单名称', value: 'name', type: 'input' },
-          { label: '菜单组件', value: 'component', type: 'select', list: 'componentList1' },
-          { label: '菜单图标', value: 'icon', type: 'slot' },
+          { label: '所属菜单', value: 'Pid', type: 'select', list: 'treeList' },
+          { label: '菜单类型', value: 'Type', type: 'tag', list: 'menuTypeList' },
+          { label: '菜单编码', value: 'Code', type: 'input' },
+          { label: '菜单名称', value: 'Name', type: 'input' },
+          { label: '菜单组件', value: 'ComponentType', type: 'select', list: 'componentList1' },
+          { label: '菜单图标', value: 'Icon', type: 'slot' },
           { label: '重定向路径', value: 'redirect', type: 'input' },
-          { label: '排序', value: 'sort', type: 'input' },
-          { label: '描述', value: 'desc', type: 'textarea' },
-          { label: '状态', value: 'status', type: 'select', list: 'statusList' }
+          { label: '排序', value: 'OrderSort', type: 'input' },
+          { label: '描述', value: 'Description', type: 'textarea' },
+          { label: '状态', value: 'Enabled', type: 'select', list: 'statusList' }
         ],
         rules: {},
         labelWidth: '120px'
@@ -364,7 +348,7 @@ export default {
   watch: {
     menuType: {
       handler (val) {
-        this.formInfo.data.type = val
+        this.formInfo.data.Type = val
       },
       immediate: true
     },
@@ -384,7 +368,7 @@ export default {
         this.dialogInfo.btLoading = false
       }
     },
-    'formInfo.data.type' (val) {
+    'formInfo.data.Type' (val) {
       const treeInfo = this.treeInfo
       // 初始化卡片显示
       this.cardInfo.data = {}
@@ -507,6 +491,7 @@ export default {
           let api; let params; const type = dialogInfo.type; let ref
           if (type === 'create' || type === 'update') {
             params = formInfo.data
+            params.Id = undefined
             ref = formInfo.ref
           } else if (type === 'btnCreate' || type === 'persUpdate') {
             params = dataControlFormInfo.data
@@ -533,15 +518,15 @@ export default {
                   dialogInfo.visible = false
                   // 设置默认项
                   if (type === 'create') {
-                    treeInfo.defaultClickedAsyc = params.pid
-                    treeInfo.defaultHighLightAsyc = params.pid
-                    treeInfo.defaultExpandedAsyc = [params.pid]
+                    treeInfo.defaultClickedAsyc = params.Pid
+                    treeInfo.defaultHighLightAsyc = params.Pid
+                    treeInfo.defaultExpandedAsyc = [params.Pid]
                     // 刷新树
                     treeInfo.refresh = Math.random()
                   } else if (type === 'update') {
-                    treeInfo.defaultClickedAsyc = params.id
-                    treeInfo.defaultHighLightAsyc = params.id
-                    treeInfo.defaultExpandedAsyc = [params.pid]
+                    treeInfo.defaultClickedAsyc = params.Id
+                    treeInfo.defaultHighLightAsyc = params.Id
+                    treeInfo.defaultExpandedAsyc = [params.Pid]
                     // 刷新树
                     treeInfo.refresh = Math.random()
                   } else if (type === 'btnCreate' || type === 'persUpdate') {
@@ -657,7 +642,7 @@ export default {
           dialogInfo.type = type
           dialogInfo.visible = true
           // 设置参数
-          formInfo.data.pid = nodeData.id
+          formInfo.data.Pid = nodeData.Id
           break
         case 'update':
           dialogInfo.type = type
@@ -687,17 +672,17 @@ export default {
     // 初始化表单
     resetForm () {
       this.formInfo.data = {
-        id: '', // *唯一ID
-        pid: '', // *父ID
-        type: this.menuType, // *菜单类型
-        code: '', // *菜单编码
-        name: '', // *菜单名称
-        component: '', // *菜单组件
-        icon: '', // 菜单图标
+        Id: '', // *唯一ID
+        Pid: '', // *父ID
+        Type: this.menuType, // *菜单类型
+        Code: '', // *菜单编码
+        Name: '', // *菜单名称
+        ComponentType: '', // *菜单组件
+        Icon: '', // 菜单图标
         redirect: '', // 重定向路径
-        sort: '', // *排序
-        desc: '', // 描述
-        status: 1 // *状态: 0：停用，1：启用(默认为1)',
+        OrderSort: '', // *排序
+        Description: '', // 描述
+        Enabled: 1 // *状态: 0：停用，1：启用(默认为1)',
         // create_user: '', // 创建人
         // create_time: '', // 创建时间
         // update_user: '', // 修改人

@@ -3,9 +3,18 @@ import request from '@/utils/request'
 // 创建
 export function createApi (data) {
   return request({
-    url: '/Permission/create',
+    url: '/Permission/Post',
     method: 'post',
-    data
+    data,
+    transformRequest: [function (data, headers) { 
+      console.log("设备添加");
+      console.log( data);
+      console.log(headers);   
+      return  JSON.stringify(data);
+    }],
+    headers: {
+        'Content-Type': 'application/json;charset=utf-8'
+    }
   })
 }
 

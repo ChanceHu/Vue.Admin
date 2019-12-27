@@ -5,7 +5,8 @@ export default (type, api, data) => {
     case 'create':
     case 'update':
       return new Promise((resolve, reject) => {
-        api(data).then(res => {
+        let dataJson = Object.assign({},data); 
+        api(dataJson).then(res => {
           if (!res) return
           Message({
             showClose: true,

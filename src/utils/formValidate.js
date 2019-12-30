@@ -100,8 +100,7 @@ var selectValidate = (rule, value, callback) => {
   }
 }
 // 上传图片
-var imageUrlValidate = (rule, value, callback) => {
-  console.log(value)
+var imageUrlValidate = (rule, value, callback) => { 
   if (!value) {
     callback(new Error('请上传图片'))
   } else {

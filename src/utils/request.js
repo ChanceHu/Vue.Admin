@@ -29,8 +29,7 @@ service.interceptors.request.use(
     return config
   },
   error => {
-    // do something with request error
-    console.log(error) // for debug
+    // do something with request error 
     return Promise.reject(error)
   }
 )
@@ -47,8 +46,7 @@ service.interceptors.response.use(
    * Here is just an example
    * You can also judge the status by HTTP Status Code
    */
-  response => {
-    console.log(response)
+  response => { 
     const res = response.data
 
     // if the custom code is not 20000, it is judged as an error.
@@ -77,8 +75,7 @@ service.interceptors.response.use(
       return res
     }
   },
-  error => {
-    console.log('err' + error) // for debug
+  error => { 
     // 超时请求处理
     var originalRequest = error.config
     if (error.code == 'ECONNABORTED' && error.message.indexOf('timeout') != -1 && !originalRequest._retry) {

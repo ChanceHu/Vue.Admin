@@ -54,7 +54,7 @@ module.exports = {
     },
     
     before: app => {
-      console.log("请求前");
+      
     }
   },
   configureWebpack: {

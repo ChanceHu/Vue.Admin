@@ -10,7 +10,7 @@ export default (type, api, data) => {
           if (!res) return
           Message({
             showClose: true,
-            message: res.message,
+            message: res.msg,
             type: res.success ? 'success' : 'error',
             duration: 3500
           })
@@ -29,7 +29,7 @@ export default (type, api, data) => {
           api(data).then(res => {
             Message({
               showClose: true,
-              message: res.message,
+              message: res.msg,
               type: res.success ? 'success' : 'error',
               duration: 3500
             })
@@ -48,7 +48,7 @@ export default (type, api, data) => {
           if (!res) return
           Message({
             showClose: true,
-            message: res.message,
+            message: res.msg,
             type: res.success ? 'success' : 'error',
             duration: 3500
           })

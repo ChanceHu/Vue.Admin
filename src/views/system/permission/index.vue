@@ -273,8 +273,8 @@ export default {
           redirect: '', // 重定向路径
           OrderSort: '', // *排序
           Description: '', // 描述
-          Enabled: true // *状态: 0：停用，1：启用(默认为1)',
-          // create_user: '', // 创建人
+          Enabled: true ,// *状态: 0：停用，1：启用(默认为1)',
+          IsHide: false, // 创建人
           // create_time: '', // 创建时间
           // update_user: '', // 修改人
           // update_time: '' // 修改时间
@@ -289,7 +289,8 @@ export default {
           { label: '重定向路径', value: 'redirect', type: 'input' },
           { label: '排序', value: 'OrderSort', type: 'input' },
           { label: '描述', value: 'Description', type: 'textarea' },
-          { label: '状态', value: 'Enabled', type: 'select', list: 'statusList' }
+          { label: '状态', value: 'Enabled', type: 'select', list: 'statusList' },
+          { label: '隐藏', value: 'IsHide', type: 'switch' }
         ],
         rules: {},
         labelWidth: '120px'
@@ -476,7 +477,7 @@ export default {
           }
           break
         case 'persDelete':
-          this.$handleAPI('delete', dataPermsDeleteApi, data.id).then(res => {
+          this.$handleAPI('delete', dataPermsDeleteApi, data.Id).then(res => {
             if (res.success) {
               tableInfo.refresh = Math.random()
             }
@@ -491,7 +492,10 @@ export default {
           let api; let params; const type = dialogInfo.type; let ref
           if (type === 'create' || type === 'update') {
             params = formInfo.data
-            params.Id = undefined
+            if(type === 'create')
+            {
+              params.Id = undefined
+            } 
             ref = formInfo.ref
           } else if (type === 'btnCreate' || type === 'persUpdate') {
             params = dataControlFormInfo.data
@@ -575,8 +579,7 @@ export default {
           }
           break
           // 左键点击的处理
-        case 'leftClick':
-          console.log(this.dataPerms)
+        case 'leftClick': 
           const obj = JSON.parse(JSON.stringify(data.data))
           if (obj.columns === -1) {
             obj.columns = '无限'
@@ -656,12 +659,12 @@ export default {
           }
           break
         case 'delete':
-          this.$handleAPI(type, deleteApi, nodeData.id).then(res => {
+          this.$handleAPI(type, deleteApi,nodeData.Id).then(res => {
             if (res.success) {
             // 删除后，树组件默认指针指向删除元素的父级
-              treeInfo.defaultClickedAsyc = nodeData.pid
-              treeInfo.defaultHighLightAsyc = nodeData.pid
-              treeInfo.defaultExpandedAsyc = [nodeData.pid]
+              treeInfo.defaultClickedAsyc = nodeData.Pid
+              treeInfo.defaultHighLightAsyc = nodeData.Pid
+              treeInfo.defaultExpandedAsyc = [nodeData.Pid]
               // 刷新树
               treeInfo.refresh = Math.random()
             }
@@ -682,7 +685,8 @@ export default {
         redirect: '', // 重定向路径
         OrderSort: '', // *排序
         Description: '', // 描述
-        Enabled: 1 // *状态: 0：停用，1：启用(默认为1)',
+        Enabled: true, // *状态: 0：停用，1：启用(默认为1)',
+        IsHide:false
         // create_user: '', // 创建人
         // create_time: '', // 创建时间
         // update_user: '', // 修改人

@@ -91,8 +91,7 @@ const actions = {
           reject('验证失败，请重新登录.')
         }
         window.localStorage.user = JSON.stringify(userInfo)
-        const { RoleNames, uRealName, name, uRemark } = userInfo
-        console.log(RoleNames)
+        const { RoleNames, uRealName, name, uRemark } = userInfo 
 
         if (!RoleNames || RoleNames.length <= 0) {
           reject('roles角色必须是非空数组')

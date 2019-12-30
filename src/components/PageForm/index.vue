@@ -63,6 +63,14 @@
           :value="childItem.value"
         />
       </el-select>
+      <el-switch
+        v-if="item.type === 'switch'"
+        :disabled="item.disabled"
+        v-model="data[item.value]" 
+        :placeholder="getPlaceholder(item)"
+        active-color="#13ce66"
+        inactive-color="#ff4949">
+      </el-switch>
       <!-- 日期选择框 -->
       <el-date-picker
         v-if="item.type === 'date'"

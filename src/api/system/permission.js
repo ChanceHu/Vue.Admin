@@ -21,17 +21,27 @@ export function createApi (data) {
 // 编辑
 export function updateApi (data) {
   return request({
-    url: '/Permission/update',
+    url: '/Permission/Put',
     method: 'put',
-    data
+    data,
+    transformRequest: [function (data, headers) { 
+      console.log("设备添加");
+      console.log( data);
+      console.log(headers);   
+      return  JSON.stringify(data);
+    }],
+    headers: {
+        'Content-Type': 'application/json;charset=utf-8'
+    }
   })
 }
 
 // 删除
 export function deleteApi (id) {
   return request({
-    url: `/Permission/delete/${id}`,
-    method: 'delete'
+    url: `/Permission/Delete/${id}`,
+    method: 'delete',
+    
   })
 }
 
@@ -94,7 +104,7 @@ export function dataPermsUpdateApi (data) {
 // 删除
 export function dataPermsDeleteApi (id) {
   return request({
-    url: `/dataPerms/delete/${id}`,
+    url: `/Permission/Delete/${id}`,
     method: 'delete'
   })
 }

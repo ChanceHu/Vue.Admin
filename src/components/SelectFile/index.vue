@@ -179,8 +179,7 @@ export default {
         key: 'id',
         pKey: 'pid',
         data: val
-      })
-      console.log(val)
+      }) 
       this.initTree(val)
     }
   },

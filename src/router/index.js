@@ -347,34 +347,7 @@ export function resetRouter() {
   // 主要用来动态修改路由的时候重置路由为只有公共的路由导航
   router.matcher = newRouter.matcher // 重置路由器
 }
-export function filterAsyncRouter(asyncRouterMap) {
-  // 注意这里的 asyncRouterMap 是一个数组
-  const accessedRouters = asyncRouterMap.filter(route => {
-    if (route.code && !route.IsButton) {
-      route.path = '/'+route.path;
-      if (route.code === '/' || route.code === '-') { // Layout组件特殊处理
-        route.component = Layout 
-      } else {
-        try {
-          route.component = _import(route.code.replace('/:id', ''))
-         
-        } catch (e) {
-          try {
-            route.component = () => import('@/views' + route.code.replace('/:id', '') + '.vue')
-          } catch (error) {
-            console.info('%c 当前路由 ' + route.code.replace('/:id', '') + '.vue 不存在，因此如法导入组件，请检查接口数据和组件是否匹配，并重新登录，清空缓存!', 'color:red')
-          }
-        }
-      }
-    }
-    if (route.children && route.children.length && !route.IsButton) {
-      route.children = filterAsyncRouter(route.children)
-    }
-    return true
-  })
 
-  return accessedRouters
-}
 function getPath (arr, child, code) {
   const pItem = arr.find(item => child.Pid === item.Id)
   // 当前元素还存在父节点, 且父节点不为根节点
@@ -384,7 +357,7 @@ function getPath (arr, child, code) {
     return `${pItem.Code}/${code}`
   }
 }
-export function filterAsyncRouter1(asyncRouterMap) {
+export function filterAsyncRouter(asyncRouterMap) {
   let baseMenu = [];let treeMenu = []
   baseMenu = asyncRouterMap.map((item, index) => {
     // 对基础数据的处理

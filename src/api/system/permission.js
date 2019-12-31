@@ -81,46 +81,55 @@ export function getAllApi (params) {
 }
 
 /**
- * 菜单相关的数据权限
+ * 菜单相关的按钮权限
  */
 // 创建
-export function dataPermsCreateApi (data) {
+export function permsBtnCreateApi (data) {
   return request({
-    url: '/dataPerms/create',
+    url: '/PermissionButton/Post',
     method: 'post',
     data
   })
 }
 
 // 编辑
-export function dataPermsUpdateApi (data) {
+export function permsBtnUpdateApi (data) {
   return request({
-    url: '/dataPerms/update',
+    url: '/PermissionButton/Put',
     method: 'put',
-    data
+    data,
+    transformRequest: [function (data, headers) { 
+      console.log("设备添加");
+      console.log( data);
+      console.log(headers);   
+      return  JSON.stringify(data);
+    }],
+    headers: {
+        'Content-Type': 'application/json;charset=utf-8'
+    }
   })
 }
 
 // 删除
-export function dataPermsDeleteApi (id) {
+export function permsBtnDeleteApi (id) {
   return request({
-    url: `/Permission/Delete/${id}`,
+    url: `/PermissionButton/Delete/${id}`,
     method: 'delete'
   })
 }
 
 // 得到单条数据
-export function dataPermsGetRowApi (id) {
+export function permsBtnGetRowApi (id) {
   return request({
-    url: `/dataPerms/getRow/${id}`,
+    url: `/PermissionButton/getRow/${id}`,
     method: 'get'
   })
 }
 
 // 获取列表
-export function dataPermsGetListApi (params) {
+export function permsBtnGetListApi (params) {
   return request({
-    url: '/dataPerms/getList',
+    url: '/PermissionButton/getList',
     method: 'get',
     params
   })
@@ -129,14 +138,14 @@ export function dataPermsGetListApi (params) {
 // 获取用户拥有
 export function getRoleDataPermsApi (params) {
   return request({
-    url: `/dataPerms/getRoleDataPerms`,
+    url: `/PermissionButton/getRoleDataPerms`,
     method: 'get',
     params
   })
 }
 
 // 获取所有
-export function dataPermsGetAllApi (params) {
+export function permsBtnGetAllApi (params) {
   return request({
     url: `/PermissionButton/Get`,
     method: 'get',

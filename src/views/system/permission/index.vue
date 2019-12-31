@@ -53,7 +53,7 @@
               :refresh="tableInfo.refresh"
               :pager="tableInfo.pager"
               :data.sync="tableInfo.data"
-              :api="dataPermsGetAllApi"
+              :api="permsBtnGetAllApi"
               :query="{permsId: treeInfo.leftClickData.Id}"
               :field-list="tableInfo.fieldList"
               :list-type-info="listTypeInfo"
@@ -101,7 +101,7 @@
         </template>
       </page-form>
       <page-form
-        v-if="dialogInfo.type === 'btnCreate' || dialogInfo.type === 'persUpdate'"
+        v-if="dialogInfo.type === 'btnCreate' || dialogInfo.type === 'btnUpdate'"
         :ref-obj.sync="dataControlFormInfo.ref"
         :data="dataControlFormInfo.data"
         :field-list="dataControlFormInfo.fieldList"
@@ -115,7 +115,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { createApi, updateApi, deleteApi, getAllApi, dataPermsCreateApi, dataPermsUpdateApi, dataPermsDeleteApi, dataPermsGetAllApi } from '@/api/system/permission'
+import { createApi, updateApi, deleteApi, getAllApi, permsBtnCreateApi, permsBtnUpdateApi, permsBtnDeleteApi, permsBtnGetAllApi } from '@/api/system/permission'
 import PageTree from '@/components/PageTree'
 import PageCard from '@/components/PageCard'
 import PageTable from '@/components/PageTable'
@@ -137,10 +137,10 @@ export default {
       updateApi,
       deleteApi,
       getAllApi,
-      dataPermsCreateApi,
-      dataPermsUpdateApi,
-      dataPermsDeleteApi,
-      dataPermsGetAllApi,
+      permsBtnCreateApi,
+      permsBtnUpdateApi,
+      permsBtnDeleteApi,
+      permsBtnGetAllApi,
       // 默认的菜单类型
       menuType: 1,
       // 选项卡默认点击
@@ -298,25 +298,25 @@ export default {
       dataControlFormInfo: {
         ref: null,
         data: {
-          id: '', // *唯一ID
-          menu_id: '', // *菜单ID
-          code: '', // *编码
-          type: '', // *类型
-          name: '', // *名称
-          api: '', // *对应请求API
-          method: '' // *请求方式
+          Id: '', // *唯一ID
+          PermsId: '', // *菜单ID
+          Code: '', // *编码
+          Type: '', // *类型
+          Name: '', // *名称
+          Api: '', // *对应请求API
+          Method: '' // *请求方式
           // create_user: '', // 创建人
           // create_time: '', // 创建时间
           // update_user: '', // 修改人
           // update_time: '' // 修改时间
         },
         fieldList: [
-          { label: '所属菜单', value: 'menu_id', type: 'tag', list: 'treeList', required: true },
-          { label: '功能类型', value: 'type', type: 'select', list: 'dataControlTypeList', required: true },
-          { label: '功能编码', value: 'code', type: 'input', required: true },
-          { label: '功能名称', value: 'name', type: 'input', required: true },
-          { label: '功能api', value: 'api', type: 'input' },
-          { label: '请求方式', value: 'method', type: 'select', list: 'reqTypeList', required: true }
+          { label: '所属菜单', value: 'PermsId', type: 'tag', list: 'treeList', required: true },
+          { label: '功能类型', value: 'Type', type: 'select', list: 'dataControlTypeList', required: true },
+          { label: '功能编码', value: 'Code', type: 'input', required: true },
+          { label: '功能名称', value: 'Name', type: 'input', required: true },
+          { label: '功能api', value: 'Api', type: 'input' },
+          { label: '请求方式', value: 'Method', type: 'select', list: 'reqTypeList', required: true }
         ],
         rules: {},
         labelWidth: '120px'
@@ -326,8 +326,8 @@ export default {
         title: {
           create: '添加菜单',
           update: '编辑菜单',
-          btnCreate: '添加菜单权限',
-          persUpdate: '编辑菜单权限'
+          btnCreate: '添加菜单按钮',
+          btnUpdate: '编辑菜单按钮'
         },
         visible: false,
         type: '',
@@ -353,6 +353,7 @@ export default {
       },
       immediate: true
     },
+    //表单显示关闭时
     'dialogInfo.visible' (val) {
       const formInfo = this.formInfo
       const dataControlFormInfo = this.dataControlFormInfo
@@ -369,6 +370,7 @@ export default {
         this.dialogInfo.btLoading = false
       }
     },
+    //
     'formInfo.data.Type' (val) {
       const treeInfo = this.treeInfo
       // 初始化卡片显示
@@ -463,9 +465,9 @@ export default {
           dialogInfo.type = event
           dialogInfo.visible = true
           // 设置参数
-          dataControlFormInfo.data.menu_id = treeInfo.leftClickData.Id
+          dataControlFormInfo.data.PermsId = treeInfo.leftClickData.Id
           break
-        case 'persUpdate':
+        case 'btnUpdate':
           dialogInfo.type = event
           dialogInfo.visible = true
           // 显示信息
@@ -476,8 +478,8 @@ export default {
             }
           }
           break
-        case 'persDelete':
-          this.$handleAPI('delete', dataPermsDeleteApi, data.Id).then(res => {
+        case 'btnDelete':
+          this.$handleAPI('delete', permsBtnDeleteApi, data.Id).then(res => {
             if (res.success) {
               tableInfo.refresh = Math.random()
             }
@@ -497,8 +499,12 @@ export default {
               params.Id = undefined
             } 
             ref = formInfo.ref
-          } else if (type === 'btnCreate' || type === 'persUpdate') {
+          } else if (type === 'btnCreate' || type === 'btnUpdate') {
             params = dataControlFormInfo.data
+            if(type === 'btnCreate')
+            {
+              params.Id = undefined;
+            }
             ref = dataControlFormInfo.ref
           } else {
             return
@@ -510,9 +516,9 @@ export default {
               } else if (type === 'update') {
                 api = updateApi
               } else if (type === 'btnCreate') {
-                api = dataPermsCreateApi
-              } else if (type === 'persUpdate') {
-                api = dataPermsUpdateApi
+                api = permsBtnCreateApi
+              } else if (type === 'btnUpdate') {
+                api = permsBtnUpdateApi
               } else {
                 return
               }
@@ -533,7 +539,7 @@ export default {
                     treeInfo.defaultExpandedAsyc = [params.Pid]
                     // 刷新树
                     treeInfo.refresh = Math.random()
-                  } else if (type === 'btnCreate' || type === 'persUpdate') {
+                  } else if (type === 'btnCreate' || type === 'btnUpdate') {
                     tableInfo.refresh = Math.random()
                   }
                 }
@@ -552,7 +558,7 @@ export default {
         return type
       } else if (type === 'btnCreate') {
         return 'create'
-      } else if (type === 'persUpdate') {
+      } else if (type === 'btnUpdate') {
         return 'update'
       }
     },
@@ -693,13 +699,13 @@ export default {
         // update_time: '' // 修改时间
       }
       this.dataControlFormInfo.data = {
-        id: '', // *唯一ID
-        menu_id: '', // *菜单ID
-        code: '', // *编码
-        type: '', // *类型
-        name: '', // *名称
-        api: '', // *对应请求API
-        method: '' // *请求方式
+        Id: '', // *唯一ID
+        PermsId: '', // *菜单ID
+        Code: '', // *编码
+        Type: '', // *类型
+        Name: '', // *名称
+        Api: '', // *对应请求API
+        Method: '' // *请求方式
         // create_user: '', // 创建人
         // create_time: '', // 创建时间
         // update_user: '', // 修改人

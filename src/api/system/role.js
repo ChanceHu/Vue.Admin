@@ -3,7 +3,7 @@ import request from '@/utils/request'
  
 export function getListApi(params){
   return request({
-      url:'/Role/Get',
+      url:'/Role/GetList',
       method:'get',
       params,  
   })
@@ -39,4 +39,11 @@ export function createApi(params){
         }]
     })
   } 
+  //获取全部
+  export function getList() {
+    return request({
+        url:'/Role/GetList',
+        method:'get', 
+    })
+  }
  

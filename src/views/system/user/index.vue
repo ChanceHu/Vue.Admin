@@ -64,7 +64,7 @@
         </el-upload>  
       </div> 
     </el-card>
-    <div class="table-container">
+    <div class="page-table" style="margin-top:20px">
       <el-table
         ref="returnApplyTable"
         :data="list"
@@ -72,7 +72,8 @@
         @selection-change="handleSelectionChange"
         v-loading="listLoading"
         border 
-        :row-style="{height:'25px'}" 
+        :max-height="tableHeight || undefined"
+         
       >
         <el-table-column type="selection" width="60" align="center"></el-table-column>
         <el-table-column label="用户账户" width="180" align="center">
@@ -103,7 +104,7 @@
         </el-table-column>
         <el-table-column label="操作" width="240" align="center">
           <template slot-scope="scope"> 
-            <el-button size="mini" @click="handleViewDetail(scope.row.id)">详情</el-button> 
+            <el-button size="mini" @click="handleViewDetail(scope.row)">详情</el-button> 
             <el-button size="mini" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -137,7 +138,8 @@
         :page-sizes="[5, 10, 20, 50, 100]"
         :total="total"
       ></el-pagination>
-    </div>  
+    </div> 
+    <user-edit ref="dialogUser"  :dialogUser.sync="dialogUser" /> 
   </div>
 </template>
 <script>
@@ -145,7 +147,8 @@ import {
   fetchList,
   userExcelDown,userUpLoad,
   deleteUser
-} from "@/api/user";   
+} from "@/api/user";  
+import UserEdit from "./component/userEdit.vue"; 
 import moment from "moment";  
 import collapse from  '@/utils/collapse.js'//条件折叠
 const defaultListQuery = {
@@ -176,7 +179,7 @@ export default {
   data() {
     return { 
       isActive:false,   
-      dialogDevice: false, 
+      dialogUser: false, 
       listQuery: Object.assign({}, defaultListQuery),
       typeOptions: Object.assign({}, defaultStatusOptions),  
       list: null,
@@ -197,11 +200,22 @@ export default {
       Tokens: {
         Authorization: "Bearer " + window.sessionStorage.getItem("Token")
       },
-      excelFile:[]
+      excelFile:[],
+      tableHeight: 0, // 表格最大高度
     };
   }, 
+  components: { UserEdit },
   created() {
     this.getList();
+  },
+  mounted () {
+    // 得到表格的高度
+    this.tableHeight = this.getTableHeight()
+    // 监听页面大小改变
+    window.addEventListener('resize', () => {
+      // 得到表格的高度
+      this.tableHeight = this.getTableHeight()
+    })
   },
   filters: { 
     dateFormat(row) {
@@ -236,16 +250,18 @@ export default {
       this.listQuery.PageIndex = 1;
       this.getList();
     },
-    handleViewDetail(id) { 
+    handleViewDetail(row) { 
       var self = this;
-      self.$refs.dialogDevice.showDialog(id);  
-      self.dialogDevice = true;
+      self.$refs.dialogUser.showDialog(row);  
+      self.dialogUser = true;
       
     }, 
     handleDelete(index, row) {
       let ids = [];
-      ids.push(row.id);
-      this.deleteDeivecs(ids);
+      ids.push(row.uID);
+      console.log(ids);
+      this.deleteUser(ids);
+
     },
     handleBatchOperate() {
       if (this.multipleSelection == null || this.multipleSelection.length < 1 ) {
@@ -266,11 +282,11 @@ export default {
           //let params = new URLSearchParams();
           let ids = [];
           for (let i = 0, len = this.multipleSelection.length; i < len; i++) {
-            ids.push(this.multipleSelection[i].id);
+            ids.push(this.multipleSelection[i].uID);
           }
           console.log(ids);
-          let pram = { Ids: JSON.stringify(ids) };
-          deleteDevice(pram).then(response => {
+          let pram = { ids: JSON.stringify(ids) };
+          deleteUser(pram).then(response => {
             this.getList();
             this.$message({
               type: "success",
@@ -297,7 +313,7 @@ export default {
       this.listQuery.PageIndex = val;
       this.getList();
     },
-    deleteDeivecs(ids) {
+    deleteUser(ids) {
       let self = this;
       self
         .$confirm("是否要进行该删除操作?", "提示", {
@@ -306,7 +322,7 @@ export default {
           type: "warning"
         })
         .then(() => {
-          let pram = { Ids: JSON.stringify(ids) };
+          let pram = { ids: JSON.stringify(ids) };
           console.log(pram);
           deleteUser(pram).then(response => {
             self.$message({
@@ -409,6 +425,27 @@ export default {
         return blooean // 返回参数
       }
       
+    },
+    getTableHeight () {
+      // 当表格存在的时候才执行操作
+      if (document.getElementsByClassName('el-table').length === 0) {
+        return
+      }
+      const boxH = document.body.clientHeight
+      const navH = document.getElementsByClassName('navbar')[0] ? document.getElementsByClassName('navbar')[0].clientHeight : 0
+      const tagH = document.getElementsByClassName('tags-view-container')[0] ? document.getElementsByClassName('tags-view-container')[0].clientHeight : 0
+      const searchH = document.getElementsByClassName('filter-container')[0] ? document.getElementsByClassName('filter-container')[0].clientHeight : 0
+      const operateH = document.getElementsByClassName('operate-container')[0] ? document.getElementsByClassName('operate-container')[0].clientHeight : 0
+      const pagerH = document.getElementsByClassName('pagination-container')[0] || { clientHeight: 0 }
+      const bottomH = pagerH.clientHeight ? pagerH.clientHeight + 40 : pagerH.clientHeight - 35
+      const tab = document.getElementsByClassName('el-table')[0] || { offsetTop: 0 }
+      const tabOffT = tab.offsetTop
+
+      // 表格的高度 = 视口高度 - 表格到头部导航的距离 - 头部导航的高度137 - 分页组件的高度100 - 分页组件
+      document.getElementsByClassName('el-table')[0].style.height = (boxH - tabOffT - navH - tagH - searchH - bottomH-120) + 'px'
+       console.log('表格最大高度为:' + (boxH - navH - tagH - searchH - bottomH))
+       console.log('表格的高度:' + (boxH - tabOffT - navH - tagH - searchH - bottomH) )
+      return (boxH - navH - tagH - searchH - bottomH-120)
     }
   }
 };

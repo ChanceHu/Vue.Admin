@@ -53,7 +53,7 @@ export function userUpLoad(data){
 }
 export function deleteUser(params){
   return request({
-      url:'/Device/DeleteDevice',
+      url:'/User/Delete',
       method:'delete',
       params, 
       transformRequest:[function(data,header){
@@ -61,6 +61,39 @@ export function deleteUser(params){
       }]
   })
 } 
+export function addUser(params){
+  return request({
+      url:'/User/Post',
+      method:'post',
+      data:params, 
+      transformRequest: [function (data, headers) { 
+          console.log("设备添加");
+          console.log( data);
+          console.log(headers);   
+          return  JSON.stringify(data);
+      }],
+      headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+      }
+  })
+}
+// 编辑
+export function updateUser (data) {
+  return request({
+    url: '/User/Put',
+    method: 'put',
+    data,
+    transformRequest: [function (data, headers) { 
+      console.log("设备添加");
+      console.log( data);
+      console.log(headers);   
+      return  JSON.stringify(data);
+    }],
+    headers: {
+        'Content-Type': 'application/json;charset=utf-8'
+    }
+  })
+}
 export function  refreshToken(params) {
   return request({
     url:'/Login/RefreshToken',

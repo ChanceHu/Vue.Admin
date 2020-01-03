@@ -151,18 +151,26 @@ export default {
     filterText: {
       type: String
     },
-    // 节点的key字段名称
+    // 节点的key字段名称,每个树节点用来作为唯一标识的属性，整棵树应该是唯一的
     nodeKey: {
       type: String,
       default: 'id'
     },
-    // 设置树状的字段结构
+    // 设置树状的字段结构格式
+    // data: [
+    //   {
+    //     id: 1,
+    //     Name: '一级 1',
+    //     leaf:false,
+    //     children: [ ] 
+    //   }
+    // ]
     treeProps: {
       type: Object,
       default: () => {
         return {
           children: 'children',
-          label: 'Name',
+          label: 'Name',//用于显示tree的字段
           isLeaf: 'leaf'
         }
       }
@@ -387,7 +395,8 @@ export default {
           // 数据处理
           arr = JSON.parse(JSON.stringify(resData))
           arr.forEach(item => {
-            // 保证刷新之后key的唯一
+            //把api返回的字段映射成自定义的tree数据格式
+            // 把Id值存为key值保证刷新之后key的唯一
             item.key = item[loadInfo.key]
             item[treeProps.label] = item[loadInfo.label]
           })

@@ -65,7 +65,7 @@ export function getListApi (params) {
 // 获取所有
 export function getRoleMenuApi (params) {
   return request({
-    url: `/Permission/getRoleMenu`,
+    url: `/Permission/GetRolePerms`,
     method: 'get',
     params
   })

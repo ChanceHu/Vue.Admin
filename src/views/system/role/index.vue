@@ -52,8 +52,8 @@
       <!-- 权限分配组件 -->
       <permissions
         v-if="dialogInfo.type === 'permissions' && dialogInfo.visible"
-        :role-id="treeInfo.rightClickData.id"
-        :role-p-id="treeInfo.rightClickData.pid"
+        :role-id="treeInfo.rightClickData.Id"
+        :role-p-id="treeInfo.rightClickData.Pid"
         :params.sync="roleParams"
       /> 
     </page-dialog>
@@ -125,15 +125,13 @@ export default {
         data: {},
         fieldList: [
           { label: '所属角色', value: 'Pid' ,list: 'treeList'},
-          { label: '角色名称', value: 'Name' },
-          { label: '可创建专栏数', value: 'columns' },
-          { label: '可创建用户数', value: 'users' },
+          { label: '角色名称', value: 'Name' }, 
           { label: '描述', value: 'Description' },
           { label: '状态', value: 'Enabled', list: 'statusList' },
-          { label: '创建人', value: 'create_user_name' },
-          { label: '创建时间', value: 'create_time' },
-          { label: '更新人', value: 'update_user_name' },
-          { label: '更新时间', value: 'update_time' }
+          { label: '创建人', value: 'CreateBy' },
+          { label: '创建时间', value: 'CreateTime' },
+          { label: '更新人', value: 'ModifyBy' },
+          { label: '更新时间', value: 'ModifyTime' }
         ]
       },
       // 表单相关
@@ -141,23 +139,17 @@ export default {
         data: {
           Id: '', // *唯一ID
           Pid: '', // *父ID
-          Name: '', // *角色名称
-          columns: 1, // 专栏数量, 0为无限
-          users: 10, // 可创建多少个用户, 0为无限
-          desc: '', // 描述
-          status: 1 // *状态: 0：停用，1：启用(默认为1)',
-          // create_user: '', // 创建人
-          // create_time: '', // 创建时间
-          // update_user: '', // 修改人
-          // update_time: '' // 修改时间
+          Name: '', // *角色名称 
+          Description: '', // 描述
+          Enabled: true // *状态: 0：停用，1：启用(默认为1)'
         },
         fieldList: [
           { label: '所属角色', value: 'Pid', type: 'tag', list: 'treeList', required: true },
           { label: '名称', value: 'Name', type: 'input', required: true },
-          { label: '可创建专栏数', value: 'columns', type: 'inputNumber', min: 1, max: 1, required: true },
-          { label: '可创建用户数', value: 'users', type: 'inputNumber', min: 1, max: 10, required: true },
-          { label: '描述', value: 'desc', type: 'textarea', className: 'el-form-block' },
-          { label: '状态', value: 'status', type: 'select', list: 'statusList', required: true }
+          // { label: '可创建专栏数', value: 'columns', type: 'inputNumber', min: 1, max: 10, required: true },
+          // { label: '可创建用户数', value: 'users', type: 'inputNumber', min: 1, max: 10, required: true },
+          { label: '描述', value: 'Description', type: 'textarea', className: 'el-form-block' },
+          { label: '状态', value: 'Enabled', type: 'select', list: 'statusList', required: true }
         ],
         rules: {},
         labelWidth: '120px'
@@ -296,6 +288,7 @@ export default {
               const type = dialogInfo.type
               if (type === 'create') {
                 api = createApi
+                params.Id = undefined;
               } else if (type === 'update') {
                 api = updateApi
               } else {
@@ -309,13 +302,13 @@ export default {
                   treeInfo.refresh = Math.random()
                   // 设置默认项
                   if (type === 'create') {
-                    treeInfo.defaultClickedAsyc = params.pid
-                    treeInfo.defaultHighLightAsyc = params.pid
-                    treeInfo.defaultExpandedAsyc = [params.pid]
+                    treeInfo.defaultClickedAsyc = params.Pid
+                    treeInfo.defaultHighLightAsyc = params.Pid
+                    treeInfo.defaultExpandedAsyc = [params.Pid]
                   } else if (type === 'update') {
-                    treeInfo.defaultClickedAsyc = params.id
-                    treeInfo.defaultHighLightAsyc = params.id
-                    treeInfo.defaultExpandedAsyc = [params.pid]
+                    treeInfo.defaultClickedAsyc = params.Id
+                    treeInfo.defaultHighLightAsyc = params.Id
+                    treeInfo.defaultExpandedAsyc = [params.Pid]
                   }
                 }
                 dialogInfo.btLoading = false
@@ -395,7 +388,7 @@ export default {
           dialogInfo.type = type
           dialogInfo.visible = true
           // 设置参数
-          formInfo.data.pid = nodeData.id
+          formInfo.data.Pid = nodeData.Id
           break
         case 'update':
           dialogInfo.type = type
@@ -409,25 +402,21 @@ export default {
           }
           break
         case 'delete':
-          this.$handleAPI(type, deleteApi, nodeData.id).then(res => {
+          let params = { id:nodeData.Id}
+          this.$handleAPI(type, deleteApi, params).then(res => {
             if (res.success) {
             // 删除后，树组件默认指针指向删除元素的父级
-              treeInfo.defaultClickedAsyc = nodeData.pid
-              treeInfo.defaultHighLightAsyc = nodeData.pid
-              treeInfo.defaultExpandedAsyc = [nodeData.pid]
+              treeInfo.defaultClickedAsyc = nodeData.Pid
+              treeInfo.defaultHighLightAsyc = nodeData.Pid
+              treeInfo.defaultExpandedAsyc = [nodeData.Pid]
               // 刷新树
               treeInfo.refresh = Math.random()
             }
           })
-          break
-        case 'bindUser':
-          dialogInfo.type = type
-          dialogInfo.title[type] = `绑定用户(${treeInfo.rightClickData.name})`
-          dialogInfo.visible = true
-          break
+          break 
         case 'permissions':
           dialogInfo.type = type
-          dialogInfo.title[type] = `分配权限(${treeInfo.rightClickData.name})`
+          dialogInfo.title[type] = `分配权限(${treeInfo.rightClickData.Name})`
           dialogInfo.visible = true
           break
       }
@@ -435,13 +424,11 @@ export default {
     // 初始化表单
     resetForm () {
       this.formInfo.data = {
-        id: '', // *唯一ID
-        pid: '', // *父ID
-        name: '', // *角色昵称
-        columns: 1, // 专栏数量, 0为无限
-        users: 10, // 可创建多少个用户, 0为无限
-        desc: '', // 描述
-        status: 1 // *状态: 0：停用，1：启用(默认为1)',
+        Id: '', // *唯一ID
+        Pid: '', // *父ID
+        Name: '', // *角色昵称 
+        Description: '', // 描述
+        Enabled: true // *状态: 0：停用，1：启用(默认为1)',
         // create_user: '', // 创建人
         // create_time: '', // 创建时间
         // update_user: '', // 修改人

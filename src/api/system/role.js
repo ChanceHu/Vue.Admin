@@ -3,7 +3,7 @@ import request from '@/utils/request'
  
 export function getListApi(params){
   return request({
-      url:'/Role/GetList',
+      url:'/Role/Get',
       method:'get',
       params,  
   })
@@ -11,7 +11,7 @@ export function getListApi(params){
  
 export function deleteApi(params){
   return request({
-      url:'/Role/DeleteModule',
+      url:'/Role/Delete',
       method:'delete',
       params, 
       transformRequest:[function(data,header){
@@ -19,31 +19,31 @@ export function deleteApi(params){
       }]
   })
 } 
-export function createApi(params){
+export function createApi(data){
     return request({
-        url:'/Role/DeleteModule',
-        method:'delete',
-        params, 
-        transformRequest:[function(data,header){
-            return data;
-        }]
+        url:'/Role/Post',
+        method:'post',
+        data, 
+        transformRequest: [function (data, headers) {   
+          return  JSON.stringify(data);
+        }],
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        }
     })
   } 
-  export function updateApi(params){
+  export function updateApi(data){
     return request({
-        url:'/Role/DeleteModule',
-        method:'delete',
-        params, 
-        transformRequest:[function(data,header){
-            return data;
-        }]
+        url:'/Role/Put',
+        method:'Put',
+        data, 
+        transformRequest: [function (data, headers) {  
+          return  JSON.stringify(data);
+        }],
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        }
     })
   } 
-  //获取全部
-  export function getList() {
-    return request({
-        url:'/Role/GetList',
-        method:'get', 
-    })
-  }
+ 
  

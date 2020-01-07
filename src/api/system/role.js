@@ -45,5 +45,13 @@ export function createApi(data){
         }
     })
   } 
+  export function getPermissionsApi(params) {
+    return request ({
+      url:'/Permission/GetPermAndBtnIds',
+      method:'get',
+      params,  
+    })
+    
+  }
  
  

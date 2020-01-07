@@ -44,7 +44,7 @@
               :data.sync="tableInfo.data"
               :checked-list="roleRelation.permissions"
               :api="getRoleDataPermsApi"
-              :query="{menuId: treeInfo.leftClickData.id}"
+              :query="{permsId: treeInfo.leftClickData.Id}"
               :field-list="tableInfo.fieldList"
               :list-type-info="listTypeInfo"
               :handle="tableInfo.handle"
@@ -146,12 +146,12 @@ export default {
         baseData: [], // 树的基础数据，从组件中获取到
         // 加载相关数据
         loadInfo: {
-          key: 'id', // 节点id
-          pKey: 'pid', // 节点父级id
-          label: 'name', // 节点名称字段
+          key: 'Id', // 节点id
+          pKey: 'Pid', // 节点父级id
+          label: 'Name', // 节点名称字段
           api: getRoleMenuApi, // 获取数据的接口
           params: { data: [{ key: 'type', value: 1 }, { key: 'roleId', value: this.rolePId }], type: 'query' },
-          resFieldList: ['content'] // 数据所在字段
+          resFieldList: ['response'] // 数据所在字段
         },
         leftClickData: {}
       },
@@ -197,8 +197,8 @@ export default {
     'treeInfo.baseData' (val) {
       // 得到树状数据
       this.treeInfo.treeData = this.$fn.getTreeArr({
-        key: 'id',
-        pKey: 'pid',
+        key: 'Id',
+        pKey: 'Pid',
         data: val
       })
       this.initTree(val)
@@ -219,7 +219,7 @@ export default {
     initTree (val) {
       const treeInfo = this.treeInfo
       val.forEach(item => {
-        if (item.pid === -1) {
+        if (item.Pid === -1) {
           item.disabled = true
         }
       })
@@ -229,16 +229,16 @@ export default {
         // 容错处理
         if (val[0]) {
           // 设置默认
-          treeInfo.defaultClicked = { id: val[0].id }
-          treeInfo.defaultHighLight = val[0].id
-          treeInfo.defaultExpanded = [val[0].id]
+          treeInfo.defaultClicked = { id: val[0].Id }
+          treeInfo.defaultHighLight = val[0].Id
+          treeInfo.defaultExpanded = [val[0].Id]
         }
       }
 
       // 设置列表
       this.listTypeInfo.treeList = val.map(item => {
-        item.key = item.name
-        item.value = item.id
+        item.key = item.Name
+        item.value = item.Id
         return item
       })
     },
@@ -253,7 +253,7 @@ export default {
             checkArr.forEach((item1, index1) => {
               let key
               // 得到属于父节点的数据
-              if (item.pid === item1) {
+              if (item.Pid === item1) {
                 key = index1
               }
               checkArr.forEach((item2, index2) => {
@@ -308,24 +308,24 @@ export default {
           // 拿到当前列表中未选中的数据
           if (data.length === 0) {
             unSelectedIds = this.tableInfo.data.map(item => {
-              return item.id
+              return item.Id
             })
           } else {
             this.tableInfo.data.forEach(item => {
               let index = 0
               data.forEach((item1, index1) => {
-                if (item1 && item1.id) {
+                if (item1 && item1.Id) {
                 // 得到当前选中的ID
-                  selectIds.push(item1.id)
+                  selectIds.push(item1.Id)
                   // 当列表中的数据在选择的数据中不存在
-                  if (item.id !== item1.id) {
+                  if (item.Id !== item1.Id) {
                     index++
                   }
                 }
               })
               // 得到当前未选中的id
               if (index === data.length) {
-                unSelectedIds.push(item.id)
+                unSelectedIds.push(item.Id)
               }
             })
           }

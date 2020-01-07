@@ -51,16 +51,7 @@ export function getRowApi (id) {
     url: `/Permission/getRow/${id}`,
     method: 'get'
   })
-}
-
-// 获取列表
-export function getListApi (params) {
-  return request({
-    url: '/Permission/GetTreeList',
-    method: 'get',
-    params
-  })
-}
+} 
 
 // 获取所有
 export function getRoleMenuApi (params) {
@@ -74,7 +65,7 @@ export function getRoleMenuApi (params) {
 // 获取所有
 export function getAllApi (params) {
   return request({
-    url: `/Permission/GetTreeList`,
+    url: `/Permission/Get`,
     method: 'get',
     params
   })
@@ -138,7 +129,7 @@ export function permsBtnGetListApi (params) {
 // 获取用户拥有
 export function getRoleDataPermsApi (params) {
   return request({
-    url: `/PermissionButton/getRoleDataPerms`,
+    url: `/PermissionButton/GetBtnByPermsRoleId`,
     method: 'get',
     params
   })

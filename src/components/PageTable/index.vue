@@ -263,16 +263,20 @@ export default {
           if (res.success) {
             // 使外面可以访问到表格数据
             const arr = Array.isArray(res.response.data) ? res.response.data : res.response.data
+            console.log("表格")
+            console.log(arr)
+            console.log(res)
             this.$emit('update:data', arr)
             if (this.pager) {
               this.listInfo.total = res.response.dataCount
               this.listInfo.query.curPage = res.response.page - 0
               this.listInfo.query.pageSize = res.response.PageSize - 0
             }
+            let checkedLists =this.checkedList
             // 设置当前选中项
             this.checkedList.forEach(selected => {
               const row = arr.find(item => {
-                return item.id === selected
+                return item.Id === selected
               })
               this.$nextTick(() => {
                 if (!row) return

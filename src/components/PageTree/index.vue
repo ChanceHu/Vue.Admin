@@ -392,6 +392,7 @@ export default {
           for (let i = 0; i < resFieldList.length; i++) {
             resData = resData[resFieldList[i]]
           }
+          console.log(resData)
           // 数据处理
           arr = JSON.parse(JSON.stringify(resData))
           arr.forEach(item => {

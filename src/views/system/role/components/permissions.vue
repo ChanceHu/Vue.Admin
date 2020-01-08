@@ -35,7 +35,7 @@
             <!-- 点击页面组件时显示 -->
             <!-- 表格 -->
             <page-table
-              v-show="treeInfo.leftClickData.component === 1"
+              v-show="treeInfo.leftClickData.ComponentType === 1"
               :listen-height="false"
               :check-box="true"
               :class="'table'"
@@ -44,7 +44,7 @@
               :data.sync="tableInfo.data"
               :checked-list="roleRelation.permissions"
               :api="getRoleDataPermsApi"
-              :query="{permsId: treeInfo.leftClickData.Id}"
+              :query="{permsId: treeInfo.leftClickData.Id,roleId:rolePId}"
               :field-list="tableInfo.fieldList"
               :list-type-info="listTypeInfo"
               :handle="tableInfo.handle"
@@ -53,7 +53,7 @@
             />
             <!-- 提示 -->
             <p
-              v-show="treeInfo.leftClickData.component !== 1"
+              v-show="treeInfo.leftClickData.ComponentType !== 1"
               class="tips"
             >
               选择功能页面可查看相关数据权限
@@ -88,9 +88,9 @@ export default {
       type: Object,
       default: () => {
         return {
-          menu: [],
-          permissions: [],
-          roleId: ''
+          menu: [],//菜单
+          permissions: [],//按钮
+          roleId: 0
         }
       }
     }
@@ -109,7 +109,7 @@ export default {
         menuTypeList: [
           { key: '平台端', value: 1, status: false },
           { key: '论坛端', value: 2, status: false },
-          { key: '移动端', value: 3, status: false }
+          //{ key: '移动端', value: 3, status: false }
         ],
         componentsList: [
           { key: '根目录', value: -1 },
@@ -163,11 +163,11 @@ export default {
         pager: false,
         data: [],
         fieldList: [
-          { label: '所属菜单', value: 'menu_id', list: 'treeList', required: true },
-          { label: '触发类型', value: 'type', list: 'dataControlTypeList', required: true },
+          { label: '所属菜单', value: 'PermsId', list: 'treeList', required: true },
+          { label: '触发类型', value: 'Type', list: 'dataControlTypeList', required: true },
           // {label: '功能编码', value: 'code', required: true},
-          { label: '功能名称', value: 'name', required: true }
-          // {label: '功能api', value: 'api', required: true},
+          { label: '功能名称', value: 'Name', required: true },
+          {label: '功能api', value: 'Api', required: true},
           // {label: '请求方式', value: 'method', list: 'reqTypeList', required: true}
         ]
       },
@@ -246,7 +246,8 @@ export default {
     getPermissions () {
       getPermissionsApi({ roleId: this.roleId }).then(res => {
         if (res.success) {
-          const data = res.content
+          console.log(res.response)
+          const data = res.response
           const checkArr = data.menu
           // 得到要勾选的数据, 将父级过滤掉
           for (const item of this.treeInfo.baseData) {

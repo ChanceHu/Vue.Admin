@@ -121,6 +121,7 @@ export const constantRoutes = [
       }
     ]
   }
+
 ]
 
 /**
@@ -322,7 +323,7 @@ export const asyncRoutes = [
     component: Layout,
     children: [
       {
-        path: 'https://github.com/PanJiaChen/vue-element-admin',
+        path: 'https://github.com/ChanceHu/Vue.Admin',
         meta: { title: 'External Link', icon: 'link' }
       }
     ]
@@ -348,7 +349,7 @@ export function resetRouter() {
   router.matcher = newRouter.matcher // 重置路由器
 }
 
-function getPath (arr, child, code) {
+function getPath(arr, child, code) {
   const pItem = arr.find(item => child.Pid === item.Id)
   // 当前元素还存在父节点, 且父节点不为根节点
   if (arr.find(item => pItem.Pid === item.Id && item.Pid > -1)) {
@@ -358,12 +359,12 @@ function getPath (arr, child, code) {
   }
 }
 export function filterAsyncRouter(asyncRouterMap) {
-  let baseMenu = [];let treeMenu = []
+  let baseMenu = []; let treeMenu = []
   baseMenu = asyncRouterMap.map((item, index) => {
     // 对基础数据的处理
     item.meta = {}
     item.meta.requireAuth = true
-    item.meta.NoTabPage = item.IsHide ? true : false
+    item.meta.NoTabPage = !!item.IsHide
     item.meta.title = item.Name
     item.meta.code = item.Code
     item.meta.icon = item.Icon
@@ -375,7 +376,7 @@ export function filterAsyncRouter(asyncRouterMap) {
     // 设置页面对应的组件 对应组件: -1. 根节点 1. 页面组件 2.默认布局 3456...扩展布局
     switch (item.ComponentType) {
       case -1:
-        console.log('根节点，已经过滤掉了') 
+        console.log('根节点，已经过滤掉了')
         break
       case 1:
         item.component = resolve => require([`@/views/${getPath(asyncRouterMap, item, item.Code)}/index`], resolve)
@@ -401,8 +402,9 @@ export function filterAsyncRouter(asyncRouterMap) {
   baseMenu = baseMenu.sort((a, b) => a.sort - b.sort)
   // 得到树状数组
   treeMenu = globalFn.getTreeArr({ key: 'id', pKey: 'pid', data: baseMenu, jsonData: false })
+  // 404重定向页必须放在末尾！
+  treeMenu.push({ path: '*', redirect: '/404', hidden: true })
   return treeMenu
 }
-
 
 export default router

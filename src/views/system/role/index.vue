@@ -272,7 +272,7 @@ export default {
               }
               this.$message({
                 showClose: true,
-                message: res.message,
+                message: res.msg,
                 type: res.success ? 'success' : 'error',
                 duration: 3500
               })

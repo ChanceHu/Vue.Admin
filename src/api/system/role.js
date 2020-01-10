@@ -59,7 +59,7 @@ export function createApi(data){
 // 设置角色权限
 export function setPermissionsApi (data) {
   return request({
-    url: '/api/roleRelation/setPermissions',
+    url: '/Role/SavePermissions',
     method: 'post',
     data
   })

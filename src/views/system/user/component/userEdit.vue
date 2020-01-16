@@ -20,8 +20,8 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="密码" prop="uLoginPWD">
-                  <el-input v-model="userFrom.uLoginPWD" placeholder="请输入用户密码" type="text" />
+                <el-form-item label="密码"  >
+                  <el-input v-model="userFrom.uLoginPWD" :placeholder="isEdit?'为空则不修改':'默认123456'" type="text" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -82,18 +82,7 @@
                   <el-input v-model="userFrom.uRemark" type="textarea" placeholder="请输入用户介绍" />
                 </el-form-item>
               </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="24">
-                <el-form-item label="角色" prop="RIDs">
-                  <el-select v-model="userFrom.RIDs" multiple placeholder="请选择角色">
-                    <el-option :key="0" :label="'未选择角色'" :value="0" />
-                    <el-option v-for="item in roles" :key="item.Id" :label="item.Name" :value="item.Id" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-
+            </el-row> 
           </el-form>
         </div>
       </div>
@@ -106,8 +95,7 @@
 </template>
 
 <script>
-import { updateUser, addUser } from '@/api/user'
-import { getListApi } from '@/api/system/role'
+import { updateUser, addUser } from '@/api/user' 
 const defaultSexOptions = [
   {
     value: 1,
@@ -129,15 +117,13 @@ export default {
   data() {
     return {
       visible: this.dialogUser,
-      userFrom: {},
-      roles: [],
+      userFrom: {}, 
       isEdit: false,
       flowPic: null,
       sexOptions: Object.assign({}, defaultSexOptions),
       ruleValidate: {
         name: [{ required: true, message: '请填写昵称', trigger: 'blur' }],
         uLoginName: [{ required: true, message: '请填写账户登录名', trigger: 'blur' }],
-        uLoginPWD: [{ required: true, message: '请填写密码', trigger: 'blur' }],
         uEmail: [
           { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
         ],
@@ -155,13 +141,10 @@ export default {
   },
   methods: {
     showDialog(row) {
-      var self = this
-      console.log(row)
-      getListApi().then((res) => {
-        this.roles = res.response
-      })
+      var self = this 
       if (row !== undefined && row !== null && row !== '') {
         self.userFrom = row
+        self.userFrom.uLoginPWD = ''
         self.isEdit = true
       } else {
         self.isEdit = false

@@ -179,14 +179,10 @@ export default {
     ])
   },
   watch: {
-    'dialogInfo.visible' (val) {
-      const formInfo = this.formInfo
+    'dialogInfo.visible' (val) { 
       if (!val) {
-        // 表单验证初始化
-        if (formInfo.ref) {
-          formInfo.ref.resetFields()
-        }
-        this.resetForm()
+        // 表单验证初始化 
+        //this.resetForm()
         // 重置弹窗按钮loading
         this.dialogInfo.btLoading = false
       }

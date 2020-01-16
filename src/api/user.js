@@ -94,6 +94,16 @@ export function updateUser (data) {
     }
   })
 }
+
+export function resetUser(params)
+{
+  return request({
+    url: '/User/ResetPwd',
+    method: 'put',
+    params,  
+  })
+  
+}
 export function  refreshToken(params) {
   return request({
     url:'/Login/RefreshToken',

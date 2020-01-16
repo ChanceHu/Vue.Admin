@@ -45,14 +45,13 @@
       <div class="btn-heigh">
         <i class="el-icon-tickets"></i>
         <span>数据列表</span>
+        <el-button size="mini" type="primary" class="btn-add" @click="handleBindingRoles()">绑定角色</el-button> 
         <el-button size="mini" type="primary" class="btn-add" @click="handleViewDetail('')">添加用户</el-button> 
         <el-upload
           class="upload-demo btn-add"
           ref="upload"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          
-          :on-change="handleChange"  
-          :headers="Tokens"
+          action="https://jsonplaceholder.typicode.com/posts/" 
+          :on-change="handleChange"   
           :limit="1"
           :file-list="excelFile"
           :before-upload="handleBefore"
@@ -84,7 +83,7 @@
         </el-table-column>
         <el-table-column  label="角色" width="180" align="center">
           <template slot-scope="scope">
-              <el-tag style="margin-left:5px" v-for="item in scope.row.RoleNames" :key="item.Id" >
+              <el-tag style="margin-left:5px" v-for="item in scope.row.RoleNames"  :key="item.Id" >
                 {{item}}
               </el-tag>
           </template>
@@ -102,10 +101,15 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="240" align="center">
+        <el-table-column label="操作" width="150" align="center">
           <template slot-scope="scope"> 
-            <el-button size="mini" @click="handleViewDetail(scope.row)">详情</el-button> 
-            <el-button size="mini" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <el-dropdown  split-button size="mini" type="primary" @click="handleViewDetail(scope.row)">
+              详情
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item  @click.native="handleDelete(scope.$index, scope.row)">删除</el-dropdown-item>
+                <el-dropdown-item  @click.native="handleReset(scope.row)">重置密码</el-dropdown-item> 
+              </el-dropdown-menu>
+            </el-dropdown> 
           </template>
         </el-table-column>
       </el-table>
@@ -140,17 +144,41 @@
       ></el-pagination>
     </div> 
     <user-edit ref="dialogUser"  :dialogUser.sync="dialogUser" /> 
+    <page-dialog
+    :title="dialogBinding.title"
+    :visible.sync="dialogBinding.visible"
+    :width="dialogBinding.width"
+    :bt-loading="dialogBinding.btLoading"
+    :bt-list="dialogBinding.btList"
+    @handleClick="handleClick"
+    
+    >
+      <div style="text-align: center">
+       <el-transfer  style="text-align: left; display: inline-block" v-model="valuetransfer" :data="datatransfer"
+       :titles="['系统角色', '已选角色']"
+       ></el-transfer>
+      </div>
+    </page-dialog>
+    
   </div>
 </template>
+<style>
+  .transfer-footer {
+    margin-left: 20px;
+    padding: 6px 5px;
+  }
+</style>
 <script>
 import {
   fetchList,
   userExcelDown,userUpLoad,
-  deleteUser
+  deleteUser,resetUser
 } from "@/api/user";  
+import { getListApi ,saveUserRoles} from '@/api/system/role'
 import UserEdit from "./component/userEdit.vue"; 
 import moment from "moment";  
 import collapse from  '@/utils/collapse.js'//条件折叠
+import PageDialog from '@/components/PageDialog'
 const defaultListQuery = {
   PageIndex: 1,
   PageSize: 10,
@@ -175,9 +203,24 @@ const defaultStatusOptions = [
 ]; 
 export default {
   name: "user",
-  components: { collapse },
+  components: { UserEdit,collapse,PageDialog },
   data() {
+     
     return { 
+      datatransfer : [],
+      valuetransfer : [],
+        // 弹窗相关
+      dialogBinding: {
+        title:'绑定角色',
+        visible: false, 
+        width:'20%',
+        btLoading: false,
+        type:'update',
+        btList: [
+          { label: '关闭', type: '', icon: '', event: 'close', show: true },
+          { label: '保存', type: 'primary', icon: '', event: 'save', saveLoading: false, show: true }
+        ]
+      },
       isActive:false,   
       dialogUser: false, 
       listQuery: Object.assign({}, defaultListQuery),
@@ -197,14 +240,11 @@ export default {
           value:2
         }
       ],
-      Tokens: {
-        Authorization: "Bearer " + window.sessionStorage.getItem("Token")
-      },
+      
       excelFile:[],
       tableHeight: 0, // 表格最大高度
     };
-  }, 
-  components: { UserEdit },
+  },  
   created() {
     this.getList();
   },
@@ -239,7 +279,49 @@ export default {
       } 
     }
   },
+  watch:{
+     'dialogBinding.visible' (val) {
+      
+      if (!val) {
+         
+        //this.resetForm()
+        // 重置弹窗按钮loading
+        this.dialogBinding.btLoading = false
+        
+      }
+    },
+  },
   methods: {
+      // 按钮点击
+    handleClick (event, data) { 
+      const dialogInfo = this.dialogBinding
+     
+      switch (event) {
+      // 弹窗点击关闭
+        case 'close':
+          dialogInfo.visible = false
+          break
+          // 弹窗点击保存
+        case 'save':   
+          let roles = this.valuetransfer;
+          let userId = this.multipleSelection[0].uID;
+          let api = saveUserRoles; const params = {userId,roles}
+          const type = dialogInfo.type
+           
+          dialogInfo.btLoading = true
+          this.$handleAPI('update', api, params).then(res => {
+            if (res.success) {
+               dialogInfo.visible = false
+               this.loadListData();
+            }
+            dialogInfo.btLoading = false
+          }).catch(e => {
+            dialogInfo.btLoading = false
+          }) 
+          break
+      }
+    },
+    
     handleSelectionChange(val) {
       this.multipleSelection = val; 
     },
@@ -256,6 +338,66 @@ export default {
       self.dialogUser = true;
       
     }, 
+    handleBindingRoles()
+    {
+      if (this.multipleSelection == null || this.multipleSelection.length < 1 ) {
+        this.$message({
+          message: "请选择要绑定的用户",
+          type: "warning",
+          duration: 1000
+        });
+        return;
+      }
+      if ( this.multipleSelection.length > 1)
+      {
+         this.$message({
+          message: "一次只能给一个用户绑定",
+          type: "warning",
+          duration: 1000
+        });
+        return;
+      }
+     
+      let userroles = this.multipleSelection[0].RIDs;
+      this.valuetransfer = userroles;
+      getListApi().then(res => { 
+        if (res.success) {
+          const data = [];
+          for (let i = 0; i < res.response.length; i++) {
+            data.push({
+              key: res.response[i].Id,
+              label: res.response[i].Name,
+            });
+          }
+          this.datatransfer = data;
+          console.log(this.datatransfer)
+          this.dialogBinding.visible = true;
+        } 
+      }).catch(e => {
+        
+      });
+      
+    },
+    handleReset(row)
+    {
+      let self = this;
+      self.$confirm("是否要重置用户密码?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+      .then(() => {
+        let pram = { uid: row.uID};
+        console.log(pram);
+        resetUser(pram).then(response => {
+          self.$message({
+            message: response.msg,
+            type: "success",
+            duration: 1000
+          });
+        });
+      });
+    },
     handleDelete(index, row) {
       let ids = [];
       ids.push(row.uID);
@@ -400,8 +542,7 @@ export default {
     handleBefore(fileList){
       console.log(fileList.type)
       this.fileUploadSuffix(fileList,'.xlsx')
-    },
-    
+    }, 
     //判断后缀是否正确
     fileUploadSuffix(fileList, suffix) {
       let blooean = true 

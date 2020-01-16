@@ -62,4 +62,12 @@ export function setPermissionsApi(data) {
     data
   })
 }
+///设置用户角色
+export function saveUserRoles(data) {
+  return request({
+    url: '/UserRole/Post',
+    method: 'post',
+    data
+  })
+}
 
